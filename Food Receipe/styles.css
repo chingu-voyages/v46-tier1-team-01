@@ -1,0 +1,13 @@
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+} */
+.modal__close {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.modal__close:hover {
+  cursor: pointer;
+}
