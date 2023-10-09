@@ -8,7 +8,7 @@
       src="https://kit.fontawesome.com/bb8e411a96.js"
       crossorigin="anonymous"
     ></script>
-    <script src="../index.js"></script>
+    <script src="../index.js" defer></script>
     <title>Recipe Finder</title>
   </head>
   <body>
@@ -44,7 +44,7 @@
               class="result__image"
             />
             <h3 class="result__name">Meal Name</h3>
-            <a href="https://notion.so">Get recipe</a>
+            <button type="button" class="result__get-recipe">Get Recipe</button>
           </div>
           <div class="results__result">
             <img
@@ -53,7 +53,7 @@
               class="result__image"
             />
             <h3 class="result__name">Meal Name</h3>
-            <a href="https://notion.so">Get recipe</a>
+            <button type="button" class="result__get-recipe">Get Recipe</button>
           </div>
           <div class="results__result">
             <img
@@ -62,9 +62,27 @@
               class="result__image"
             />
             <h3 class="result__name">Meal Name</h3>
-            <a href="https://notion.so">Get recipe</a>
+            <button type="button" class="result__get-recipe">Get Recipe</button>
           </div>
         </div>
+        <dialog class="modal">
+          <p class="modal__close">&#10006;</p>
+          <h3 class="modal__name">Meal Name</h3>
+          <img
+            src="https://picsum.photos/300/200"
+            alt=""
+            class="modal__image"
+          />
+          <ul class="modal__category">
+            <li>category</li>
+            <li>category</li>
+          </ul>
+          <h4>Ingredients</h4>
+          <p class="modal__ingredients">Insert ingredients here.</p>
+          <h4>Instructions</h4>
+          <p class="modal__instructions">Insert instructions here.</p>
+          <a href="https://notion.so">Watch Video</a>
+        </dialog>
         <footer>
           <p>
             Developed by
