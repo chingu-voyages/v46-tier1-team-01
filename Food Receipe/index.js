@@ -11,4 +11,3 @@ function openModal() {
 function closeModal() {
     modal.close()
 }
-console.log('test')
