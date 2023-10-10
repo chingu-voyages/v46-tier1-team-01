@@ -8,6 +8,6 @@ modalClose.addEventListener('click', closeModal)
 function openModal() {
     modal.showModal()
 }
-function closeModal() {
+/* function closeModal() {
     modal.close()
-}
+} */
