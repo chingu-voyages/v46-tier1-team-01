@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter&display=swap">
     <script
       src="https://kit.fontawesome.com/bb8e411a96.js"
       crossorigin="anonymous"
@@ -25,10 +26,10 @@
             name="search"
             placeholder="Enter an ingredient"
           />
-          <div class="search-button">
+          <button class="search-button" type="submit">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="button" value="Search" />
-          </div>
+            Search
+          </button>
         </form>
       </section>
       <section class="results-section">
@@ -43,8 +44,10 @@
               alt="plate of delicious food"
               class="result__image"
             />
-            <h3 class="result__name">Meal Name</h3>
-            <button type="button" class="result__get-recipe">Get Recipe</button>
+            <div class="results__result--intro">
+              <h3 class="result__name">Meal Name</h3>
+              <button type="button" class="result__get-recipe">Get Recipe</button>
+            </div>
           </div>
           <div class="results__result">
             <img
@@ -52,8 +55,10 @@
               alt="plate of delicious food"
               class="result__image"
             />
-            <h3 class="result__name">Meal Name</h3>
-            <button type="button" class="result__get-recipe">Get Recipe</button>
+            <div class="results__result--intro">
+              <h3 class="result__name">Meal Name</h3>
+              <button type="button" class="result__get-recipe">Get Recipe</button>
+            </div>
           </div>
           <div class="results__result">
             <img
@@ -61,10 +66,11 @@
               alt="plate of delicious food"
               class="result__image"
             />
-            <h3 class="result__name">Meal Name</h3>
-            <button type="button" class="result__get-recipe">Get Recipe</button>
+            <div class="results__result--intro">
+              <h3 class="result__name">Meal Name</h3>
+              <button type="button" class="result__get-recipe">Get Recipe</button>
+            </div>
           </div>
-        </div>
         <dialog class="modal">
           <p class="modal__close">&#10006;</p>
           <h3 class="modal__name">Meal Name</h3>
@@ -81,16 +87,16 @@
           <p class="modal__ingredients">Insert ingredients here.</p>
           <h4>Instructions</h4>
           <p class="modal__instructions">Insert instructions here.</p>
-          <a href="https://notion.so">Watch Video</a>
+          <a href="https://notion.so" target="_blank" class="modal__video-link">Watch Video</a>
         </dialog>
-        <footer>
-          <p>
-            Developed by
-            <a href="https://github.com/chingu-voyages/v46-tier1-team-01" target="_blank">Chingu Voyage46 Tier1 Team1</a> &copy;
-            2023
-          </p>
-        </footer>
       </section>
     </main>
+    <footer>
+      <p>
+        Developed by
+        <a href="https://github.com/chingu-voyages/v46-tier1-team-01" target="_blank">Chingu Voyage46 Tier1 Team1</a> &copy;
+        2023
+      </p>
+    </footer>
   </body>
 </html>
