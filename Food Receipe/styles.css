@@ -119,6 +119,10 @@ body {
   font-family: var(--ff-primary), Arial, Helvetica, sans-serif;
 }
 
+main {
+  min-height: 100vh;
+}
+
 button {
   background-color: var(--clr-accent);
   color: var(--clr-white);
