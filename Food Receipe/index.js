@@ -129,7 +129,7 @@ function NoResults(){
 
 function addDialog(name, url,video_url,description) {
   const dialogbox = document.createElement('dialog');
-  dialogbox.classList.add('modal'); 
+  dialogbox.classList.add('.modal'); 
 
   const close = document.createElement('p');
   close.classList.add('modal__close'); 
