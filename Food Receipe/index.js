@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       const searched = document.createElement("h2");
-      searched.textContent = `You results  for ${searchInput.value}`;
+      searched.textContent = `Your results  for ${searchInput.value}`;
       nameElement.innerHTML = " ";
       nameElement.appendChild(searched);
       clearResults();
