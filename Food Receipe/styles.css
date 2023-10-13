@@ -119,6 +119,10 @@ body {
   font-family: var(--ff-primary), Arial, Helvetica, sans-serif;
 }
 
+main {
+  min-height: 100vh;
+}
+
 button {
   background-color: var(--clr-accent);
   color: var(--clr-white);
@@ -219,6 +223,7 @@ header p {
   text-align: center;
   border-radius: 1em;
   border: 0.25em solid var(--clr-black);
+  max-width: 23rem;
 }
 
 .results__result h3 {
@@ -256,13 +261,27 @@ header p {
 
 /* Modals */
 .modal {
-  min-width: 25rem;
+  max-width: 95%;
   height: 90%;
   overflow-y: auto;
   border-radius: 1em;
   padding: 1em 2em;
   border: 0.2em solid var(--clr-black);
   background-color: var(--clr-white);
+}
+
+/* Tablet screen size */
+@media only screen and (min-width: 43.75rem) {
+  .modal {
+    max-width: 90%;
+  }
+}
+
+/* Desktop screen size */
+@media only screen and (min-width: 60rem) {
+  .modal {
+    max-width: 60rem;
+  }
 }
 
 .modal h3 {
