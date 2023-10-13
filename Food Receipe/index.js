@@ -132,7 +132,7 @@ function addDialog(name, url,video_url,description) {
   dialogbox.classList.add('.modal'); 
 
   const close = document.createElement('p');
-  close.classList.add('modal__close'); 
+  close.classList.add('.modal__close'); 
   close.innerHTML = '&#10006;';
 
   const mealName = document.createElement('h3');
@@ -142,7 +142,7 @@ function addDialog(name, url,video_url,description) {
   const mealImage = document.createElement('img');
   mealImage.src = url;
   mealImage.alt = 'Meal Image';
-  mealImage.classList.add('modal__image');
+  mealImage.classList.add('.modal__image');
 
   const Instructions = document.createElement('p');
   Instructions.classList.add('.modal__instructions');
