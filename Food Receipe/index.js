@@ -44,8 +44,8 @@ async function Autocomplete(recipeName) {
           break;
         }
         await new Promise((resolve) => setTimeout(resolve, 1000)); // 1-second delay
-        fetchThumbnail(element.display);
-       firstResultFetched = true;
+        fetchThumbnailVideoDescription(element.display);
+        firstResultFetched = true;
       }
     }
   } catch (error) {
@@ -55,7 +55,7 @@ async function Autocomplete(recipeName) {
 
 //Fetching the Thumbnail from API
 
-async function fetchThumbnail(recipeName) {
+async function fetchThumbnailVideoDescription(recipeName) {
   try {
     const response = await fetch(
       `https://tasty.p.rapidapi.com/recipes/list?from=0&size=1&q=${recipeName}`,
@@ -69,13 +69,15 @@ async function fetchThumbnail(recipeName) {
     );
 
     if (!response.ok) {
-      throw new Error("Request failed");
+       throw new Error("Request failed");
     }
 
     const data = await response.json();
     if (Array.isArray(data.results) && data.results.length > 0) {
-      const thumbnail = data.results[0].thumbnail_url;
-      createRecipe(recipeName, thumbnail);
+      const thumbnail = data.results[0].thumbnail_url; 
+      const video_url=data.results[0].original_video_url;
+      const description = data.results[0].description;
+      createRecipe(recipeName, thumbnail,video_url,description);
     } else {
       console.error("No results found in thumbnail API for:", recipeName);
     }
@@ -84,11 +86,9 @@ async function fetchThumbnail(recipeName) {
   }
 }
 
-//Fetching the Video url :
-
 //Creating the dynamic receipe content box
 
-function createRecipe(recipeName, url) {
+function createRecipe(recipeName, img_url , video_url,description) {
   const box = document.createElement("div");
   const resultIntro = document.createElement("div");
   resultIntro.classList.add("results__result--intro");
@@ -96,14 +96,15 @@ function createRecipe(recipeName, url) {
   const recipeDetails = document.createElement("h3");
   const img = document.createElement("img");
   const button = document.createElement("button");
+
   button.classList.add("result__get-recipe");
   button.textContent = "View Recipe";
 
   recipeDetails.textContent = recipeName;
-  img.src = url;
+  img.src = img_url;
 
    button.addEventListener('click', function () {
-    addDialog(recipeName, url);
+    addDialog(recipeName, img_url, video_url , description);
   });
 
   resultIntro.appendChild(recipeDetails);
@@ -115,9 +116,18 @@ function createRecipe(recipeName, url) {
   recipeContainer.appendChild(box);
 }
 
+//Function for No results
+
+function NoResults(){
+    const recipeContainer = document.querySelector(".results__container");
+    const NoResult = document.createElement('h2');
+    NoResult.textContent='No result Found';
+    recipeContainer.appendChild(NoResult);
+}
+
 // Function for view Recipe button
 
-function addDialog(name, url) {
+function addDialog(name, url,video_url,description) {
   const dialogbox = document.createElement('dialog');
   dialogbox.classList.add('modal'); 
 
@@ -134,11 +144,24 @@ function addDialog(name, url) {
   mealImage.alt = 'Meal Image';
   mealImage.classList.add('modal__image');
 
+  const Instructions = document.createElement('p');
+  Instructions.classList.add('.modal__instructions');
+  Instructions.textContent=description;
+
+  const video_link = document.createElement('a');
+  video_link.href=video_url;
+  video_link.target="_blank";
+  video_link.textContent='Watch video';
+  video_link.classList.add('.modal__video-link');
+
+
   //Need to work on other things to display.
 
   dialogbox.appendChild(close);
   dialogbox.appendChild(mealName);
   dialogbox.appendChild(mealImage);
+  dialogbox.appendChild(Instructions);
+  dialogbox.appendChild(video_link);
 
  
   document.body.appendChild(dialogbox);
@@ -150,7 +173,6 @@ function addDialog(name, url) {
     document.body.removeChild(dialogbox);
   });
 }
-
 
 // Function to clear existing results
 
