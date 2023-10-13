@@ -45,7 +45,7 @@ async function Autocomplete(recipeName) {
         }
         await new Promise((resolve) => setTimeout(resolve, 1000)); // 1-second delay
         fetchThumbnail(element.display);
-        firstResultFetched = true;
+       firstResultFetched = true;
       }
     }
   } catch (error) {
@@ -102,6 +102,10 @@ function createRecipe(recipeName, url) {
   recipeDetails.textContent = recipeName;
   img.src = url;
 
+   button.addEventListener('click', function () {
+    addDialog(recipeName, url);
+  });
+
   resultIntro.appendChild(recipeDetails);
   resultIntro.appendChild(button);
   box.appendChild(img);
@@ -113,7 +117,43 @@ function createRecipe(recipeName, url) {
 
 // Function for view Recipe button
 
+function addDialog(name, url) {
+  const dialogbox = document.createElement('dialog');
+  dialogbox.classList.add('modal'); 
+
+  const close = document.createElement('p');
+  close.classList.add('modal__close'); 
+  close.innerHTML = '&#10006;';
+
+  const mealName = document.createElement('h3');
+  mealName.classList.add('.modal__name');
+  mealName.textContent = name;
+
+  const mealImage = document.createElement('img');
+  mealImage.src = url;
+  mealImage.alt = 'Meal Image';
+  mealImage.classList.add('modal__image');
+
+  //Need to work on other things to display.
+
+  dialogbox.appendChild(close);
+  dialogbox.appendChild(mealName);
+  dialogbox.appendChild(mealImage);
+
+ 
+  document.body.appendChild(dialogbox);
+  dialogbox.showModal();
+
+  close.addEventListener('click', function () {
+    dialogbox.close();
+
+    document.body.removeChild(dialogbox);
+  });
+}
+
+
 // Function to clear existing results
+
 function clearResults() {
   const recipeContainer = document.querySelector(".results__container");
   while (recipeContainer.firstChild) {
@@ -121,18 +161,4 @@ function clearResults() {
   }
 }
 
-//Dialog Box 
 
-const getRecipeButtons = document.querySelectorAll('.result__get-recipe')
-const modal = document.querySelector('.modal')
-const modalClose = document.querySelector('.modal__close')
-
-getRecipeButtons.forEach(button => button.addEventListener('click', openModal))
-modalClose.addEventListener('click', closeModal)
-
-function openModal() {
-    modal.showModal()
-}
-function closeModal() {
-    modal.close()
-}
