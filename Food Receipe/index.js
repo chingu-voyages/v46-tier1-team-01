@@ -7,9 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (form && searchInput) {
     form.addEventListener("submit", (event) => {
       event.preventDefault();
-      const searched = document.createElement("p");
-      searched.textContent = searchInput.value;
-      nameElement.innerHTML = "";
+      const searched = document.createElement("h2");
+      searched.textContent = `You results  for ${searchInput.value}`;
+      nameElement.innerHTML = " ";
       nameElement.appendChild(searched);
       clearResults();
       Autocomplete(searchInput.value);
