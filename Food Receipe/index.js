@@ -129,30 +129,30 @@ function NoResults(){
 
 function addDialog(name, url,video_url,description) {
   const dialogbox = document.createElement('dialog');
-  dialogbox.classList.add('.modal'); 
+  dialogbox.classList.add('modal'); 
 
   const close = document.createElement('p');
-  close.classList.add('.modal__close'); 
+  close.classList.add('modal__close'); 
   close.innerHTML = '&#10006;';
 
   const mealName = document.createElement('h3');
-  mealName.classList.add('.modal__name');
+  mealName.classList.add('modal__name');
   mealName.textContent = name;
 
   const mealImage = document.createElement('img');
   mealImage.src = url;
   mealImage.alt = 'Meal Image';
-  mealImage.classList.add('.modal__image');
+  mealImage.classList.add('modal__image');
 
   const Instructions = document.createElement('p');
-  Instructions.classList.add('.modal__instructions');
+  Instructions.classList.add('modal__instructions');
   Instructions.textContent=description;
 
   const video_link = document.createElement('a');
   video_link.href=video_url;
   video_link.target="_blank";
   video_link.textContent='Watch video';
-  video_link.classList.add('.modal__video-link');
+  video_link.classList.add('modal__video-link');
 
 
   //Need to work on other things to display.
