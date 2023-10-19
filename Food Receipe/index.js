@@ -69,15 +69,15 @@ async function fetchThumbnailVideoDescription(recipeName) {
     );
 
     if (!response.ok) {
-       throw new Error("Request failed");
+      throw new Error("Request failed");
     }
 
     const data = await response.json();
     if (Array.isArray(data.results) && data.results.length > 0) {
-      const thumbnail = data.results[0].thumbnail_url; 
-      const video_url=data.results[0].original_video_url;
+      const thumbnail = data.results[0].thumbnail_url;
+      const video_url = data.results[0].original_video_url;
       const description = data.results[0].description;
-      createRecipe(recipeName, thumbnail,video_url,description);
+      createRecipe(recipeName, thumbnail, video_url, description);
     } else {
       console.error("No results found in thumbnail API for:", recipeName);
     }
@@ -88,7 +88,7 @@ async function fetchThumbnailVideoDescription(recipeName) {
 
 //Creating the dynamic receipe content box
 
-function createRecipe(recipeName, img_url , video_url,description) {
+function createRecipe(recipeName, img_url, video_url, description) {
   const box = document.createElement("div");
   const resultIntro = document.createElement("div");
   resultIntro.classList.add("results__result--intro");
@@ -103,8 +103,8 @@ function createRecipe(recipeName, img_url , video_url,description) {
   recipeDetails.textContent = recipeName;
   img.src = img_url;
 
-   button.addEventListener('click', function () {
-    addDialog(recipeName, img_url, video_url , description);
+  button.addEventListener('click', function () {
+    addDialog(recipeName, img_url, video_url, description);
   });
 
   resultIntro.appendChild(recipeDetails);
@@ -118,21 +118,21 @@ function createRecipe(recipeName, img_url , video_url,description) {
 
 //Function for No results
 
-function NoResults(){
-    const recipeContainer = document.querySelector(".results__container");
-    const NoResult = document.createElement('h2');
-    NoResult.textContent='No result Found';
-    recipeContainer.appendChild(NoResult);
+function NoResults() {
+  const recipeContainer = document.querySelector(".results__container");
+  const NoResult = document.createElement('h2');
+  NoResult.textContent = 'No result Found';
+  recipeContainer.appendChild(NoResult);
 }
 
 // Function for view Recipe button
 
-function addDialog(name, url,video_url,description) {
+function addDialog(name, url, video_url, description) {
   const dialogbox = document.createElement('dialog');
-  dialogbox.classList.add('modal'); 
+  dialogbox.classList.add('modal');
 
   const close = document.createElement('p');
-  close.classList.add('modal__close'); 
+  close.classList.add('modal__close');
   close.innerHTML = '&#10006;';
 
   const mealName = document.createElement('h3');
@@ -146,12 +146,12 @@ function addDialog(name, url,video_url,description) {
 
   const Instructions = document.createElement('p');
   Instructions.classList.add('modal__instructions');
-  Instructions.textContent=description;
+  Instructions.textContent = description;
 
   const video_link = document.createElement('a');
-  video_link.href=video_url;
-  video_link.target="_blank";
-  video_link.textContent='Watch video';
+  video_link.href = video_url;
+  video_link.target = "_blank";
+  video_link.textContent = 'Watch video';
   video_link.classList.add('modal__video-link');
 
 
@@ -163,7 +163,7 @@ function addDialog(name, url,video_url,description) {
   dialogbox.appendChild(Instructions);
   dialogbox.appendChild(video_link);
 
- 
+
   document.body.appendChild(dialogbox);
   dialogbox.showModal();
 
@@ -183,4 +183,7 @@ function clearResults() {
   }
 }
 
-
+//by Andrei : to see the styling changes we make to the modal
+const modal = document.querySelector('.modal')
+const button = document.querySelector('.result__get-recipe')
+button.addEventListener('click', () => modal.showModal())
