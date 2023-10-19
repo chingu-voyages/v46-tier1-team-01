@@ -123,16 +123,6 @@ main {
   min-height: 100vh;
 }
 
-button {
-  background-color: var(--clr-accent);
-  color: var(--clr-white);
-}
-
-button:focus {
-  outline: 0.2em solid var(--clr-accent);
-  outline-offset: 0.15em;
-}
-
 button:hover {
   cursor: pointer;
 }
@@ -193,6 +183,13 @@ header p {
 
 .search-button {
   border: none;
+  background-color: var(--clr-accent);
+  color: var(--clr-white);
+}
+
+.search-button:focus {
+  outline: 0.2em solid var(--clr-accent);
+  outline-offset: 0.15em;
 }
 
 /* Results Section */
@@ -237,10 +234,17 @@ header p {
 }
 
 .result__get-recipe {
+  background-color: var(--clr-accent);
+  color: var(--clr-white);
   border: none;
   border-radius: 20em;
   padding: 0.75em 1.5em;
   margin-top: 1.25em;
+}
+
+.result__get-recipe:focus {
+  outline: 0.2em solid var(--clr-accent);
+  outline-offset: 0.15em;
 }
 
 /* Modals */
