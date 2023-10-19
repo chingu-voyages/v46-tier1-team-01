@@ -8,7 +8,7 @@
   --clr-white: white;
   --clr-accent: #8600d2;
   /* Font families */
-  --ff-primary: 'Inter';
+  --ff-primary: "Inter";
   /* FOnt sizes */
   --fs-1: 3rem;
   --fs-2: 1.8rem;
@@ -49,8 +49,8 @@ dd {
 }
 
 /* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
-ul[role='list'],
-ol[role='list'] {
+ul[role="list"],
+ol[role="list"] {
   list-style: none;
 }
 
@@ -123,16 +123,6 @@ main {
   min-height: 100vh;
 }
 
-button {
-  background-color: var(--clr-accent);
-  color: var(--clr-white);
-}
-
-button:focus {
-  outline: 0.2em solid var(--clr-accent);
-  outline-offset: 0.15em;
-}
-
 button:hover {
   cursor: pointer;
 }
@@ -152,6 +142,11 @@ header h1 {
 
 header p {
   font-size: var(--fs-4);
+}
+
+.tagline {
+  font-style: italic;
+  margin-bottom: 1rem;
 }
 
 /* Search Section */
@@ -188,13 +183,13 @@ header p {
 
 .search-button {
   border: none;
+  background-color: var(--clr-accent);
+  color: var(--clr-white);
 }
 
-/* Screen sizes larger than mobile */
-@media only screen and (min-width: 30rem) {
-  .search-section form {
-    grid-template-columns: 2fr 1fr;
-  }
+.search-button:focus {
+  outline: 0.2em solid var(--clr-accent);
+  outline-offset: 0.15em;
 }
 
 /* Results Section */
@@ -239,49 +234,29 @@ header p {
 }
 
 .result__get-recipe {
+  background-color: var(--clr-accent);
+  color: var(--clr-white);
   border: none;
   border-radius: 20em;
   padding: 0.75em 1.5em;
   margin-top: 1.25em;
 }
 
-/* Tablet screen size */
-@media only screen and (min-width: 43.75rem) {
-  .results__container {
-    grid-template-columns: auto auto;
-  }
-}
-
-/* Desktop screen size */
-@media only screen and (min-width: 60rem) {
-  .results__container {
-    grid-template-columns: auto auto auto;
-  }
+.result__get-recipe:focus {
+  outline: 0.2em solid var(--clr-accent);
+  outline-offset: 0.15em;
 }
 
 /* Modals */
 .modal {
   max-width: 95%;
-  height: 90%;
+  max-height: 90%;
   overflow-y: auto;
   border-radius: 1em;
-  padding: 1em 2em;
+  padding: 1em 2em 2em 2em;
   border: 0.2em solid var(--clr-black);
   background-color: var(--clr-white);
-}
-
-/* Tablet screen size */
-@media only screen and (min-width: 43.75rem) {
-  .modal {
-    max-width: 40rem;
-  }
-}
-
-/* Desktop screen size */
-@media only screen and (min-width: 60rem) {
-  .modal {
-    max-width: 45rem;
-  }
+  z-index: 2;
 }
 
 .modal h3 {
@@ -290,7 +265,9 @@ header p {
 }
 
 .modal img {
-  width: 100%;
+  width: 80%;
+  margin: 0 auto;
+  border-radius: 20px;
 }
 
 .modal h4 {
@@ -300,24 +277,27 @@ header p {
 }
 
 .modal__close {
-  text-align: right;
+  border: none;
+  background: none;
   font-size: 1.5rem;
+  float: right;
 }
 
-.modal__close:hover {
-  cursor: pointer;
+.modal__name {
+  text-align: center;
+  margin-top: 1.5em;
 }
 
-.modal__category {
+.modal__tags {
   display: flex;
   gap: 1em;
-  justify-content: center;
+  justify-content: space-around;
   list-style: none;
   padding: 0;
   margin: 1.5rem 0;
 }
 
-.modal__category li {
+.modal__tags li {
   text-align: center;
   font-weight: 700;
   background-color: var(--clr-accent);
@@ -326,13 +306,49 @@ header p {
   border-radius: 10rem;
 }
 
+.tag__rating {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.tag__rating i:first-child {
+  color: rgb(255, 196, 0);
+}
+
+.modal__info {
+  display: flex;
+  gap: 2rem;
+}
+
+.modal__btn-wrapper {
+  text-align: center;
+  margin: 2em 0;
+}
+
 .modal__video-link {
-  display: block;
   font-size: 1.2rem;
   font-weight: 700;
-  color: var(--clr-accent);
+  color: var(--clr-white);
+  background-color: var(--clr-accent);
   text-align: center;
-  margin-top: 1rem;
+  padding: 0.5em 1em;
+  border-radius: 10rem;
+  text-decoration: none;
+  border: none;
+}
+
+.modal__video-link:hover {
+  cursor: pointer;
+}
+
+.modal__nutritions > summary {
+  font-size: var(--fs-4);
+  font-weight: 700;
+}
+
+.modal__nutritions:hover {
+  cursor: pointer;
 }
 
 /* Footer Section */
@@ -341,4 +357,31 @@ footer {
   text-align: center;
   background-color: var(--clr-accent);
   color: var(--clr-white);
+}
+
+/* Screen sizes larger than mobile */
+@media only screen and (min-width: 30rem) {
+  .search-section form {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+/* Tablet screen size */
+@media only screen and (min-width: 43.75rem) {
+  .modal {
+    max-width: 40rem;
+  }
+  .results__container {
+    grid-template-columns: auto auto;
+  }
+}
+
+/* Desktop screen size */
+@media only screen and (min-width: 60rem) {
+  .modal {
+    max-width: 45rem;
+  }
+  .results__container {
+    grid-template-columns: auto auto auto;
+  }
 }
