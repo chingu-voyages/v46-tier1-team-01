@@ -246,7 +246,7 @@ header p {
 /* Modals */
 .modal {
   max-width: 95%;
-  max-height: 45rem;
+  max-height: 90%;
   overflow-y: auto;
   border-radius: 1em;
   padding: 1em 2em 2em 2em;
@@ -254,6 +254,7 @@ header p {
   background-color: var(--clr-white);
   z-index: 2;
 }
+
 .modal h3 {
   font-size: var(--fs-3);
   margin-bottom: 1rem;
@@ -305,17 +306,21 @@ header p {
   align-items: center;
   gap: 0.1rem;
 }
+
 .tag__rating i:first-child {
   color: rgb(255, 196, 0);
 }
+
 .modal__info {
   display: flex;
   gap: 2rem;
 }
+
 .modal__btn-wrapper {
   text-align: center;
   margin: 1rem 0;
 }
+
 .modal__video-link {
   font-size: 1.2rem;
   font-weight: 700;
