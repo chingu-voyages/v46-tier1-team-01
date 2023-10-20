@@ -127,26 +127,35 @@ button:hover {
   cursor: pointer;
 }
 
-/* Header Section */
-header {
+/* Hero Section */
+.hero {
   text-align: center;
   padding: 2rem;
   background-color: var(--clr-accent);
   color: var(--clr-white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
 }
 
-header h1 {
+.hero__title {
   margin-bottom: 1rem;
   font-size: var(--fs-1);
 }
 
-header p {
+.hero__tagline {
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.hero__instructions {
   font-size: var(--fs-4);
 }
 
-.tagline {
-  font-style: italic;
-  margin-bottom: 1rem;
+.hero__logo {
+  max-width: 15rem;
 }
 
 /* Search Section */
@@ -378,6 +387,12 @@ footer {
 
 /* Desktop screen size */
 @media only screen and (min-width: 60rem) {
+  .hero {
+    flex-direction: row;
+  }
+  .hero__intro {
+    margin-bottom: 0;
+  }
   .modal {
     max-width: 45rem;
   }
