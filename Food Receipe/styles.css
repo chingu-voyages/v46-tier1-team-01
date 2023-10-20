@@ -127,26 +127,27 @@ button:hover {
   cursor: pointer;
 }
 
-/* Header Section */
-header {
+/* Hero Section */
+.hero {
   text-align: center;
   padding: 2rem;
   background-color: var(--clr-accent);
   color: var(--clr-white);
+  display: flex;
 }
 
-header h1 {
+.hero__title {
   margin-bottom: 1rem;
   font-size: var(--fs-1);
 }
 
-header p {
-  font-size: var(--fs-4);
-}
-
-.tagline {
+.hero__tagline {
   font-style: italic;
   margin-bottom: 1rem;
+}
+
+.hero__instructions {
+  font-size: var(--fs-4);
 }
 
 /* Search Section */
