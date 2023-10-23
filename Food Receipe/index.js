@@ -262,7 +262,7 @@ function addDialog(name, url, video_url, description) {
     document.body.removeChild(dialogbox);
   });
 
-  // //by Andrei: also properly disposes of the dialog element on Escape key press//but it doesn't work
+  // // //by Andrei: to properly dispose of the dialog element on Escape key press//but it doesn't work
   // document.body.addEventListener('keypress', (e) => {
   //   if (e.key === 'Escape') {
   //     dialogbox.close();
