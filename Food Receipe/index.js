@@ -24,6 +24,14 @@ const API_KEY = "e382cd2d05mshbe255d4b9009f46p177e2ajsn5caf5ffa3f4c";
 // Fetching AutoComplete the User input
 
 async function Autocomplete(recipeName) {
+
+  // //by Andrei : ot make it easy to add elements and check styling. Will require commenting (overriding) out actual APi functionality. DO NOT DELETE
+  // if (localStorage['resultForLS']) {
+  //   fetchThumbnailVideoDescription('chicken breast')
+  // }
+  // //END
+
+
   const url = `https://tasty.p.rapidapi.com/recipes/auto-complete?prefix=${recipeName}`;
   const options = {
     method: "GET",
@@ -77,7 +85,28 @@ async function fetchThumbnailVideoDescription(recipeName) {
       const thumbnail = data.results[0].thumbnail_url;
       const video_url = data.results[0].original_video_url;
       const description = data.results[0].description;
+
       createRecipe(recipeName, thumbnail, video_url, description);
+
+      // //by Andrei : to make it easy to add elements and check styling. Will require commenting (overriding) out actual API functionality.
+      //by Andrei: set LS for faster display of search result (mock result will aways display 'chicken')  DO NOT DELETE
+
+      // // const resultForLS = { //can comment out once LS is set
+      // //   'recipeName': recipeName,
+      // //   'thumbnail': thumbnail,
+      // //   'video_url': video_url,
+      // //   'description': description
+      // // }
+      // if (!localStorage['resultForLS']) {
+      //   localStorage.setItem('resultForLS', JSON.stringify(resultForLS))
+      // } else { console.log('exists') }
+
+      // const fromLS = JSON.parse(localStorage['resultForLS'])
+      // console.log(fromLS)
+      // createRecipe(fromLS['recipeName'], fromLS['thumbnail'], fromLS['video_url'], fromLS['description']);
+      // //END
+
+
     } else {
       console.error("No results found in thumbnail API for:", recipeName);
     }
@@ -145,34 +174,83 @@ function addDialog(name, url, video_url, description) {
 
   const mealName = document.createElement('h3');
   mealName.classList.add('modal__name');
-  mealName.textContent = Capitalize(name)
-
-
-    ;
+  mealName.textContent = Capitalize(name);
 
   const mealImage = document.createElement('img');
   mealImage.src = url;
   mealImage.alt = 'Meal Image';
   mealImage.classList.add('modal__image');
 
-  const Instructions = document.createElement('p');
-  Instructions.classList.add('modal__instructions');
-  Instructions.textContent = description;
+  const list = document.createElement('ul')
+  list.classList.add('modal__tags')
 
+  const country = document.createElement('li')
+  country.textContent = 'to be decided'.toUpperCase()
+
+  const stars = document.createElement('li')
+  stars.classList.add('tag__rating')
+  stars.innerHTML = '<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>'
+  list.append(country, stars)
+
+
+  const info = document.createElement('div')
+  info.classList.add('modal__info')
+
+  const servings = document.createElement('div')
+  const servingTitle = document.createElement('h4')
+  servingTitle.textContent = 'Servings: '
+  const servingNumber = document.createElement('p')
+  servingNumber.textContent = '100?'
+
+
+  const timeInfo = document.createElement('div')
+  const timeTitle = document.createElement('h4')
+  timeTitle.textContent = 'Cook Time: '
+  const timeNumber = document.createElement('p')
+  timeNumber.textContent = '100?'
+  servings.append(servingTitle, servingNumber)
+  timeInfo.append(timeTitle, timeNumber)
+  info.append(servings, timeInfo)
+
+
+  const ingredientsTitle = document.createElement('h4')
+  ingredientsTitle.textContent = 'Instructions: '
+  const ingredientsText = document.createElement('p');
+  ingredientsText.classList.add('modal__ingredients');
+  ingredientsText.textContent = 'Coriander chocolate peanut butter dip lavender lemonade blueberry pops red lentil curry hummus falafel bowl mint arugula salad fall coconut milk rich coconut cream.';
+
+
+  const instructionsTitle = document.createElement('h4')
+  instructionsTitle.textContent = 'Instructions: '
+  const instructionsText = document.createElement('p');
+  instructionsText.classList.add('modal__instructions');
+  instructionsText.textContent = description;
+
+  const linkContainer = document.createElement('div')
+  linkContainer.classList.add('modal__btn-wrapper')
   const video_link = document.createElement('a');
   video_link.href = video_url;
   video_link.target = "_blank";
   video_link.textContent = 'Watch video';
   video_link.classList.add('modal__video-link');
+  linkContainer.append(video_link)
+
+  const details = document.createElement('details')
+  details.classList.add('modal__nutrition')
+  const summary = document.createElement('summary')
+  summary.textContent = 'Nutrition Information'
+  const para = document.createElement('p')
+  para.textContent = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do  eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut  enim ad minim veniam, quis nostrud exercitation ullamco laboris   nisi ut aliquip ex ea commodo consequat. Duis aute irure dolo   in reprehenderit in voluptate velit esse cillum dolore eu fugiat  nulla pariatur. Excepteur sint occaecat cupidatat non proident,  sunt in culpa qui officia deserunt mollit anim'
+  details.append(summary, para)
 
 
   //Need to work on other things to display.
 
-  dialogbox.appendChild(close);
-  dialogbox.appendChild(mealName);
-  dialogbox.appendChild(mealImage);
-  dialogbox.appendChild(Instructions);
-  dialogbox.appendChild(video_link);
+  dialogbox.append(close, mealName, mealImage);
+  dialogbox.append(list, info)
+  dialogbox.append(ingredientsTitle, ingredientsText);
+  dialogbox.append(instructionsTitle, instructionsText);
+  dialogbox.append(linkContainer, details);
 
 
   document.body.appendChild(dialogbox);
@@ -180,7 +258,6 @@ function addDialog(name, url, video_url, description) {
 
   close.addEventListener('click', function () {
     dialogbox.close();
-
     document.body.removeChild(dialogbox);
   });
 }
