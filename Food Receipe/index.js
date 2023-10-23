@@ -37,7 +37,7 @@ async function Autocomplete(recipeName) {
     const response = await fetch(url, options);
     const result = await response.json();
     let firstResultFetched = false; //  1 result is enough for now -testing purpose
-
+    console.log(result)
     for (const element of result.results) {
       if (element.display.toLowerCase() !== recipeName.toLowerCase()) {
         if (firstResultFetched) {
@@ -100,10 +100,10 @@ function createRecipe(recipeName, img_url, video_url, description) {
   button.classList.add("result__get-recipe");
   button.textContent = "View Recipe";
 
-  recipeDetails.textContent = recipeName;
+  recipeDetails.textContent = Capitalize(recipeName);
   img.src = img_url;
 
-  button.addEventListener('click', function () {
+  button.addEventListener('click', () => {
     addDialog(recipeName, img_url, video_url, description);
   });
 
@@ -125,6 +125,14 @@ function NoResults() {
   recipeContainer.appendChild(NoResult);
 }
 
+function Capitalize(name) {
+  result = ''
+  for (word of name.split(' ')) {
+    result += word[0].toUpperCase() + word.slice(1) + ' '
+  }
+  return result
+}
+
 // Function for view Recipe button
 
 function addDialog(name, url, video_url, description) {
@@ -137,7 +145,10 @@ function addDialog(name, url, video_url, description) {
 
   const mealName = document.createElement('h3');
   mealName.classList.add('modal__name');
-  mealName.textContent = name;
+  mealName.textContent = Capitalize(name)
+
+
+    ;
 
   const mealImage = document.createElement('img');
   mealImage.src = url;
@@ -173,6 +184,8 @@ function addDialog(name, url, video_url, description) {
     document.body.removeChild(dialogbox);
   });
 }
+
+
 
 // Function to clear existing results
 
