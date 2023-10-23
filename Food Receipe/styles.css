@@ -351,12 +351,12 @@ button:hover {
   cursor: pointer;
 }
 
-.modal__nutritions > summary {
+.modal__nutrition > summary {
   font-size: var(--fs-4);
   font-weight: 700;
 }
 
-.modal__nutritions:hover {
+.modal__nutrition:hover {
   cursor: pointer;
 }
 
