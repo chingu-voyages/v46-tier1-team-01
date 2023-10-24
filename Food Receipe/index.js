@@ -164,7 +164,6 @@ function Capitalize(name) {
 }
 
 // Function for view Recipe button
-
 function addDialog(name, url, video_url, description) {
   const dialogbox = document.createElement('dialog');
   dialogbox.classList.add('modal');
