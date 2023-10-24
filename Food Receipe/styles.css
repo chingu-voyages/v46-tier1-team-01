@@ -258,9 +258,16 @@ button:hover {
 
 /* Modals */
 .modal {
-  max-width: 95%;
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 95%;
   max-height: 90%;
   overflow-y: auto;
+
   border-radius: 1em;
   padding: 1em 2em 2em 2em;
   border: 0.2em solid var(--clr-black);
@@ -299,8 +306,9 @@ button:hover {
 
 .modal__tags {
   display: flex;
+  flex-wrap: wrap;
   gap: 1em;
-  justify-content: space-around;
+  justify-content: space-evenly;
   list-style: none;
   padding: 0;
   margin: 1.5rem 0;
@@ -311,23 +319,18 @@ button:hover {
   font-weight: 700;
   background-color: var(--clr-accent);
   color: var(--clr-white);
-  padding: 0.2em 1em;
+  padding: 0.25em 1em;
   border-radius: 10rem;
 }
 
-.tag__rating {
+.modal-tag__rating {
   display: flex;
   align-items: center;
   gap: 0.1rem;
 }
 
-.tag__rating i:first-child {
+.modal-tag__rating i:first-child {
   color: rgb(255, 196, 0);
-}
-
-.modal__info {
-  display: flex;
-  gap: 2rem;
 }
 
 .modal__btn-wrapper {
@@ -379,6 +382,10 @@ footer {
 @media only screen and (min-width: 43.75rem) {
   .modal {
     max-width: 40rem;
+  }
+  .modal__info {
+    display: flex;
+    gap: 2rem;
   }
   .results__container {
     grid-template-columns: auto auto;

@@ -188,7 +188,7 @@ function addDialog(name, url, video_url, description) {
   country.textContent = 'to be decided'.toUpperCase()
 
   const stars = document.createElement('li')
-  stars.classList.add('tag__rating')
+  stars.classList.add('modal-tag__rating')
   stars.innerHTML = '<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>'
   list.append(country, stars)
 
@@ -285,8 +285,10 @@ function clearResults() {
 
 //by Andrei : to see the styling changes we make to the modal
 const modal = document.querySelector('.modal')
-const button = document.querySelector('.result__get-recipe')
-button.addEventListener('click', () => modal.showModal())
+const openModal = document.querySelector('.result__get-recipe')
+const closeModal = document.querySelector('.modal__close')
+closeModal.addEventListener('click', () => modal.style.display = 'none')
+openModal.addEventListener('click', () => modal.style.display = 'block')
 
 
 
@@ -300,3 +302,6 @@ function colorStars(score) {
   }
   console.log(score)
 }
+
+
+//static modal functionality
