@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       const searched = document.createElement("h2");
-      searched.textContent = `Your results  for ${searchInput.value}`;
+      searched.textContent = `Your results for ${searchInput.value}`;
       nameElement.innerHTML = " ";
       nameElement.appendChild(searched);
       clearResults();
@@ -31,7 +31,6 @@ async function Autocomplete(recipeName) {
   // }
   // //END
 
-
   const url = `https://tasty.p.rapidapi.com/recipes/auto-complete?prefix=${recipeName}`;
   const options = {
     method: "GET",
@@ -44,8 +43,9 @@ async function Autocomplete(recipeName) {
   try {
     const response = await fetch(url, options);
     const result = await response.json();
-    let firstResultFetched = false; //  1 result is enough for now -testing purpose
     console.log(result)
+    let firstResultFetched = false; //  1 result is enough for now -testing purpose
+
     for (const element of result.results) {
       if (element.display.toLowerCase() !== recipeName.toLowerCase()) {
         if (firstResultFetched) {
@@ -81,6 +81,7 @@ async function fetchThumbnailVideoDescription(recipeName) {
     }
 
     const data = await response.json();
+    console.log(data)
     if (Array.isArray(data.results) && data.results.length > 0) {
       const thumbnail = data.results[0].thumbnail_url;
       const video_url = data.results[0].original_video_url;
@@ -88,31 +89,30 @@ async function fetchThumbnailVideoDescription(recipeName) {
 
       createRecipe(recipeName, thumbnail, video_url, description);
 
-      // //by Andrei : to make it easy to add elements and check styling. Will require commenting (overriding) out actual API functionality.
-      //by Andrei: set LS for faster display of search result (mock result will aways display 'chicken')  DO NOT DELETE
 
-      // // const resultForLS = { //can comment out once LS is set
-      // //   'recipeName': recipeName,
-      // //   'thumbnail': thumbnail,
-      // //   'video_url': video_url,
-      // //   'description': description
-      // // }
-      // if (!localStorage['resultForLS']) {
-      //   localStorage.setItem('resultForLS', JSON.stringify(resultForLS))
-      // } else { console.log('exists') }
-
-      // const fromLS = JSON.parse(localStorage['resultForLS'])
-      // console.log(fromLS)
-      // createRecipe(fromLS['recipeName'], fromLS['thumbnail'], fromLS['video_url'], fromLS['description']);
-      // //END
-
-
+      const resultForLS = { //can comment out once LS is set
+        'recipeName': recipeName,
+        'thumbnail': thumbnail,
+        'video_url': video_url,
+        'description': description
+      }
     } else {
       console.error("No results found in thumbnail API for:", recipeName);
     }
   } catch (error) {
     console.error(error);
   }
+
+  // // by Andrei : to make it easy to add elements and check styling. Will require commenting (overriding) out actual API functionality.
+  // // by Andrei: set LS for faster display of search result (mock result will aways display 'chicken')  DO NOT DELETE
+  //   if (!localStorage['resultForLS']) {
+  //     localStorage.setItem('resultForLS', JSON.stringify(resultForLS))
+  //   } else { console.log('exists') }
+
+  //   const fromLS = JSON.parse(localStorage['resultForLS'])
+  //   console.log(fromLS)
+  //   createRecipe(fromLS['recipeName'], fromLS['thumbnail'], fromLS['video_url'], fromLS['description']);
+  //   //END
 }
 
 //Creating the dynamic receipe content box
@@ -135,6 +135,7 @@ function createRecipe(recipeName, img_url, video_url, description) {
   button.addEventListener('click', () => {
     addDialog(recipeName, img_url, video_url, description);
   });
+
 
   resultIntro.appendChild(recipeDetails);
   resultIntro.appendChild(button);
@@ -163,12 +164,11 @@ function Capitalize(name) {
 }
 
 // Function for view Recipe button
-
 function addDialog(name, url, video_url, description) {
   const dialogbox = document.createElement('dialog');
   dialogbox.classList.add('modal');
 
-  const close = document.createElement('p');
+  const close = document.createElement('button');
   close.classList.add('modal__close');
   close.innerHTML = '&#10006;';
 
@@ -214,7 +214,7 @@ function addDialog(name, url, video_url, description) {
 
 
   const ingredientsTitle = document.createElement('h4')
-  ingredientsTitle.textContent = 'Instructions: '
+  ingredientsTitle.textContent = 'Ingredients: '
   const ingredientsText = document.createElement('p');
   ingredientsText.classList.add('modal__ingredients');
   ingredientsText.textContent = 'Coriander chocolate peanut butter dip lavender lemonade blueberry pops red lentil curry hummus falafel bowl mint arugula salad fall coconut milk rich coconut cream.';
@@ -260,6 +260,16 @@ function addDialog(name, url, video_url, description) {
     dialogbox.close();
     document.body.removeChild(dialogbox);
   });
+
+  // // //by Andrei: to properly dispose of the dialog element on Escape key press//but it doesn't work
+  // document.body.addEventListener('keypress', (e) => {
+  //   if (e.key === 'Escape') {
+  //     dialogbox.close();
+  //     document.body.removeChild(dialogbox);
+  //   }
+  // })
+
+  colorStars(Math.ceil(Math.random() * 5))
 }
 
 
@@ -277,3 +287,16 @@ function clearResults() {
 const modal = document.querySelector('.modal')
 const button = document.querySelector('.result__get-recipe')
 button.addEventListener('click', () => modal.showModal())
+
+
+
+
+function colorStars(score) {
+  for (let i = 1; i <= 5; i++) {
+    const star = document.querySelector(`.fa-star:nth-child(${i})`);
+    if (i <= score) {
+      star.style.color = 'rgb(255, 196, 0)';
+    }
+  }
+  console.log(score)
+}
