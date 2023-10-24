@@ -25,94 +25,94 @@ const API_KEY = "e382cd2d05mshbe255d4b9009f46p177e2ajsn5caf5ffa3f4c";
 
 async function Autocomplete(recipeName) {
 
-  // //by Andrei : ot make it easy to add elements and check styling. Will require commenting (overriding) out actual APi functionality. DO NOT DELETE
-  // if (localStorage['resultForLS']) {
-  //   fetchThumbnailVideoDescription('chicken breast')
-  // }
-  // //END
-
-
-  const url = `https://tasty.p.rapidapi.com/recipes/auto-complete?prefix=${recipeName}`;
-  const options = {
-    method: "GET",
-    headers: {
-      "X-RapidAPI-Key": API_KEY,
-      "X-RapidAPI-Host": "tasty.p.rapidapi.com"
-    }
-  };
-
-  try {
-    const response = await fetch(url, options);
-    const result = await response.json();
-    let firstResultFetched = false; //  1 result is enough for now -testing purpose
-    console.log(result)
-    for (const element of result.results) {
-      if (element.display.toLowerCase() !== recipeName.toLowerCase()) {
-        if (firstResultFetched) {
-          break;
-        }
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1-second delay
-        fetchThumbnailVideoDescription(element.display);
-        firstResultFetched = true;
-      }
-    }
-  } catch (error) {
-    console.error(error);
+  //by Andrei : ot make it easy to add elements and check styling. Will require commenting (overriding) out actual APi functionality. DO NOT DELETE
+  if (localStorage['resultForLS']) {
+    fetchThumbnailVideoDescription('chicken breast')
   }
+  //END
+
+
+  // const url = `https://tasty.p.rapidapi.com/recipes/auto-complete?prefix=${recipeName}`;
+  // const options = {
+  //   method: "GET",
+  //   headers: {
+  //     "X-RapidAPI-Key": API_KEY,
+  //     "X-RapidAPI-Host": "tasty.p.rapidapi.com"
+  //   }
+  // };
+
+  // try {
+  //   const response = await fetch(url, options);
+  //   const result = await response.json();
+  //   let firstResultFetched = false; //  1 result is enough for now -testing purpose
+  //   console.log(result)
+  //   for (const element of result.results) {
+  //     if (element.display.toLowerCase() !== recipeName.toLowerCase()) {
+  //       if (firstResultFetched) {
+  //         break;
+  //       }
+  //       await new Promise((resolve) => setTimeout(resolve, 1000)); // 1-second delay
+  //       fetchThumbnailVideoDescription(element.display);
+  //       firstResultFetched = true;
+  //     }
+  //   }
+  // } catch (error) {
+  //   console.error(error);
+  // }
 }
 
 //Fetching the Thumbnail from API
 
 async function fetchThumbnailVideoDescription(recipeName) {
-  try {
-    const response = await fetch(
-      `https://tasty.p.rapidapi.com/recipes/list?from=0&size=1&q=${recipeName}`,
-      {
-        method: "GET",
-        headers: {
-          "X-RapidAPI-Key": API_KEY,
-          "X-RapidAPI-Host": "tasty.p.rapidapi.com"
-        }
-      }
-    );
+  // try {
+  //   const response = await fetch(
+  //     `https://tasty.p.rapidapi.com/recipes/list?from=0&size=1&q=${recipeName}`,
+  //     {
+  //       method: "GET",
+  //       headers: {
+  //         "X-RapidAPI-Key": API_KEY,
+  //         "X-RapidAPI-Host": "tasty.p.rapidapi.com"
+  //       }
+  //     }
+  //   );
 
-    if (!response.ok) {
-      throw new Error("Request failed");
-    }
+  //   if (!response.ok) {
+  //     throw new Error("Request failed");
+  //   }
 
-    const data = await response.json();
-    if (Array.isArray(data.results) && data.results.length > 0) {
-      const thumbnail = data.results[0].thumbnail_url;
-      const video_url = data.results[0].original_video_url;
-      const description = data.results[0].description;
+  //   const data = await response.json();
+  //   if (Array.isArray(data.results) && data.results.length > 0) {
+  //     const thumbnail = data.results[0].thumbnail_url;
+  //     const video_url = data.results[0].original_video_url;
+  //     const description = data.results[0].description;
 
-      createRecipe(recipeName, thumbnail, video_url, description);
+  // createRecipe(recipeName, thumbnail, video_url, description);
 
-      // //by Andrei : to make it easy to add elements and check styling. Will require commenting (overriding) out actual API functionality.
-      // // by Andrei: set LS for faster display of search result (mock result will aways display 'chicken')  DO NOT DELETE
+  //by Andrei : to make it easy to add elements and check styling. Will require commenting (overriding) out actual API functionality.
+  // by Andrei: set LS for faster display of search result (mock result will aways display 'chicken')  DO NOT DELETE
 
-      // // const resultForLS = { //can comment out once LS is set
-      // //   'recipeName': recipeName,
-      // //   'thumbnail': thumbnail,
-      // //   'video_url': video_url,
-      // //   'description': description
-      // // }
-      // if (!localStorage['resultForLS']) {
-      //   localStorage.setItem('resultForLS', JSON.stringify(resultForLS))
-      // } else { console.log('exists') }
+  // const resultForLS = { //can comment out once LS is set
+  //   'recipeName': recipeName,
+  //   'thumbnail': thumbnail,
+  //   'video_url': video_url,
+  //   'description': description
+  // }
+  if (!localStorage['resultForLS']) {
+    localStorage.setItem('resultForLS', JSON.stringify(resultForLS))
+  } else { console.log('exists') }
 
-      // const fromLS = JSON.parse(localStorage['resultForLS'])
-      // console.log(fromLS)
-      // createRecipe(fromLS['recipeName'], fromLS['thumbnail'], fromLS['video_url'], fromLS['description']);
-      // //END
+  const fromLS = JSON.parse(localStorage['resultForLS'])
+  console.log(fromLS)
+  createRecipe(fromLS['recipeName'], fromLS['thumbnail'], fromLS['video_url'], fromLS['description']);
+  //END
 
 
-    } else {
-      console.error("No results found in thumbnail API for:", recipeName);
-    }
-  } catch (error) {
-    console.error(error);
-  }
+  //   } else {
+  //     console.error("No results found in thumbnail API for:", recipeName);
+  //   }
+  // } catch (error) {
+  //   console.error(error);
+  // }
 }
 
 //Creating the dynamic receipe content box
@@ -293,29 +293,11 @@ button.addEventListener('click', () => modal.showModal())
 
 
 function colorStars(score) {
-  console.log(score)
-  switch (score) {
-    case 1:
-      document.querySelector('.fa-star:nth-child(1)').style.color = 'rgb(255, 196, 0)';
-      break;
-    case 2:
-      document.querySelector('.fa-star:nth-child(1)').style.color = 'rgb(255, 196, 0)';
-      document.querySelector('.fa-star:nth-child(2)').style.color = 'rgb(255, 196, 0)'; break;
-    case 3:
-      document.querySelector('.fa-star:nth-child(1)').style.color = 'rgb(255, 196, 0)';
-      document.querySelector('.fa-star:nth-child(2)').style.color = 'rgb(255, 196, 0)';
-      document.querySelector('.fa-star:nth-child(3)').style.color = 'rgb(255, 196, 0)'; break;
-    case 4:
-      document.querySelector('.fa-star:nth-child(1)').style.color = 'rgb(255, 196, 0)';
-      document.querySelector('.fa-star:nth-child(2)').style.color = 'rgb(255, 196, 0)';
-      document.querySelector('.fa-star:nth-child(3)').style.color = 'rgb(255, 196, 0)';
-      document.querySelector('.fa-star:nth-child(4)').style.color = 'rgb(255, 196, 0)'; break;
-    case 5:
-      document.querySelector('.fa-star:nth-child(1)').style.color = 'rgb(255, 196, 0)';
-      document.querySelector('.fa-star:nth-child(2)').style.color = 'rgb(255, 196, 0)';
-      document.querySelector('.fa-star:nth-child(3)').style.color = 'rgb(255, 196, 0)';
-      document.querySelector('.fa-star:nth-child(4)').style.color = 'rgb(255, 196, 0)';
-      document.querySelector('.fa-star:nth-child(5)').style.color = 'rgb(255, 196, 0)'; break;
-
+  for (let i = 1; i <= 5; i++) {
+    const star = document.querySelector(`.fa-star:nth-child(${i})`);
+    if (i <= score) {
+      star.style.color = 'rgb(255, 196, 0)';
+    }
   }
+  console.log(score)
 }
