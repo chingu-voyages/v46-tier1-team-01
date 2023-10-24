@@ -169,7 +169,7 @@ function addDialog(name, url, video_url, description) {
   const dialogbox = document.createElement('dialog');
   dialogbox.classList.add('modal');
 
-  const close = document.createElement('p');
+  const close = document.createElement('button');
   close.classList.add('modal__close');
   close.innerHTML = '&#10006;';
 
