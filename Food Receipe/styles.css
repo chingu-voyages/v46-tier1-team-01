@@ -264,7 +264,7 @@ button:hover {
   left: 50%;
   transform: translate(-50%, -50%);
 
-  max-width: 95%;
+  width: 95%;
   max-height: 90%;
   overflow-y: auto;
 
