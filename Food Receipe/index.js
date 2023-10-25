@@ -178,8 +178,8 @@ function Capitalize(name) {
 
 // Function for view Recipe button
 function addDialog(name, url, video_url, description, countryTag, rating, cookTime, yields) {
-  const dialogbox = document.createElement('div');
-  dialogbox.classList.add('modal');
+  const modal = document.createElement('div');
+  modal.classList.add('modal');
 
   const close = document.createElement('button');
   close.classList.add('modal__close');
@@ -256,18 +256,18 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
 
   //Need to work on other things to display.
 
-  dialogbox.append(close, mealName, mealImage);
-  dialogbox.append(list, info)
-  dialogbox.append(ingredientsTitle, ingredientsText);
-  dialogbox.append(instructionsTitle, instructionsText);
-  dialogbox.append(linkContainer, details);
+  modal.append(close, mealName, mealImage);
+  modal.append(list, info)
+  modal.append(ingredientsTitle, ingredientsText);
+  modal.append(instructionsTitle, instructionsText);
+  modal.append(linkContainer, details);
 
 
-  document.querySelector('.results-section').appendChild(dialogbox);
-  dialogbox.style.display = 'block';
+  document.querySelector('.results-section').appendChild(modal);
+  modal.style.display = 'block';
 
   close.addEventListener('click', function () {
-    document.querySelector('.results-section').removeChild(dialogbox);
+    document.querySelector('.results-section').removeChild(modal);
   });
 
   //by Andrei: to properly dispose of the dialog element on Escape key press
@@ -275,7 +275,7 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
   document.body.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       try {
-        document.querySelector('.results-section').removeChild(dialogbox);
+        document.querySelector('.results-section').removeChild(modal);
       } catch (error) {
         console.error("Caught an exception:", error);
       }
@@ -310,10 +310,9 @@ function colorStars(score) {
 
 //by Andrei : static modal functionality
 
-
-//by Andrei : to see the styling changes we make to the modal
-const modal = document.querySelector('.modal')
-const openModal = document.querySelector('.result__get-recipe')
-const closeModal = document.querySelector('.modal__close')
-closeModal.addEventListener('click', () => modal.style.display = 'none')
-openModal.addEventListener('click', () => modal.style.display = 'block')
+// //by Andrei : to see the styling changes we make to the modal
+// const modal = document.querySelector('.modal')
+// const openModal = document.querySelector('.result__get-recipe')
+// const closeModal = document.querySelector('.modal__close')
+// closeModal.addEventListener('click', () => modal.style.display = 'none')
+// openModal.addEventListener('click', () => modal.style.display = 'block')
