@@ -86,16 +86,26 @@ async function fetchThumbnailVideoDescription(recipeName) {
       const thumbnail = data.results[0].thumbnail_url;
       const video_url = data.results[0].original_video_url;
       const description = data.results[0].description;
+      const countryTag = data.results[0].tags[0].display_name
+      const rating = Math.ceil(data.results[0].user_ratings.score * 5)
+      const yields = data.results[0].yields
+      const cookTime = data.results[0]?.total_time_tier?.display_tier
 
-      createRecipe(recipeName, thumbnail, video_url, description);
+      createRecipe(recipeName, thumbnail, video_url, description, countryTag, rating, cookTime, yields);
 
 
-      const resultForLS = { //can comment out once LS is set
-        'recipeName': recipeName,
-        'thumbnail': thumbnail,
-        'video_url': video_url,
-        'description': description
-      }
+      // const resultForLS = { //can comment out once LS is set
+      //   'recipeName': recipeName,
+      //   'thumbnail': thumbnail,
+      //   'video_url': video_url,
+      //   'description': description,
+      //   'country': countryTag,
+      //   'rating': rating,
+      //   'yields': yields,
+      //   'cookTime': cookTime
+      // }
+      // localStorage.setItem('resultForLS', JSON.stringify(resultForLS))
+
     } else {
       console.error("No results found in thumbnail API for:", recipeName);
     }
@@ -105,19 +115,22 @@ async function fetchThumbnailVideoDescription(recipeName) {
 
   // // by Andrei : to make it easy to add elements and check styling. Will require commenting (overriding) out actual API functionality.
   // // by Andrei: set LS for faster display of search result (mock result will aways display 'chicken')  DO NOT DELETE
-  //   if (!localStorage['resultForLS']) {
-  //     localStorage.setItem('resultForLS', JSON.stringify(resultForLS))
-  //   } else { console.log('exists') }
+  // if (!localStorage['resultForLS']) {
+  //   localStorage.setItem('resultForLS', JSON.stringify(resultForLS))
+  // } else { console.log('exists') }
 
-  //   const fromLS = JSON.parse(localStorage['resultForLS'])
-  //   console.log(fromLS)
-  //   createRecipe(fromLS['recipeName'], fromLS['thumbnail'], fromLS['video_url'], fromLS['description']);
-  //   //END
+  // const fromLS = JSON.parse(localStorage['resultForLS'])
+  // console.log(fromLS)
+  // createRecipe(fromLS['recipeName'], fromLS['thumbnail'], fromLS['video_url'], fromLS['description']);
+  // const dataMea = JSON.parse(localStorage.getItem('entire data'))
+  // console.log(dataMea.results[0].yields)
+  // //END
+
 }
 
 //Creating the dynamic receipe content box
 
-function createRecipe(recipeName, img_url, video_url, description) {
+function createRecipe(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields) {
   const box = document.createElement("div");
   const resultIntro = document.createElement("div");
   resultIntro.classList.add("results__result--intro");
@@ -133,7 +146,7 @@ function createRecipe(recipeName, img_url, video_url, description) {
   img.src = img_url;
 
   button.addEventListener('click', () => {
-    addDialog(recipeName, img_url, video_url, description);
+    addDialog(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields);
   });
 
 
@@ -164,8 +177,8 @@ function Capitalize(name) {
 }
 
 // Function for view Recipe button
-function addDialog(name, url, video_url, description) {
-  const dialogbox = document.createElement('dialog');
+function addDialog(name, url, video_url, description, countryTag, rating, cookTime, yields) {
+  const dialogbox = document.createElement('div');
   dialogbox.classList.add('modal');
 
   const close = document.createElement('button');
@@ -185,7 +198,7 @@ function addDialog(name, url, video_url, description) {
   list.classList.add('modal__tags')
 
   const country = document.createElement('li')
-  country.textContent = 'to be decided'.toUpperCase()
+  country.textContent = countryTag.toUpperCase()
 
   const stars = document.createElement('li')
   stars.classList.add('modal-tag__rating')
@@ -196,19 +209,16 @@ function addDialog(name, url, video_url, description) {
   const info = document.createElement('div')
   info.classList.add('modal__info')
 
-  const servings = document.createElement('div')
-  const servingTitle = document.createElement('h4')
-  servingTitle.textContent = 'Servings: '
-  const servingNumber = document.createElement('p')
-  servingNumber.textContent = '100?'
 
+  const servings = document.createElement('h4')
+  servings.textContent = yields
 
   const timeInfo = document.createElement('div')
   const timeTitle = document.createElement('h4')
-  timeTitle.textContent = 'Cook Time: '
+  timeTitle.textContent = 'Cooking Time: '
   const timeNumber = document.createElement('p')
-  timeNumber.textContent = '100?'
-  servings.append(servingTitle, servingNumber)
+  timeNumber.textContent = cookTime
+
   timeInfo.append(timeTitle, timeNumber)
   info.append(servings, timeInfo)
 
@@ -253,23 +263,25 @@ function addDialog(name, url, video_url, description) {
   dialogbox.append(linkContainer, details);
 
 
-  document.body.appendChild(dialogbox);
-  dialogbox.showModal();
+  document.querySelector('.results-section').appendChild(dialogbox);
+  dialogbox.style.display = 'block';
 
   close.addEventListener('click', function () {
-    dialogbox.close();
-    document.body.removeChild(dialogbox);
+    document.querySelector('.results-section').removeChild(dialogbox);
   });
 
-  // // //by Andrei: to properly dispose of the dialog element on Escape key press//but it doesn't work
-  // document.body.addEventListener('keypress', (e) => {
-  //   if (e.key === 'Escape') {
-  //     dialogbox.close();
-  //     document.body.removeChild(dialogbox);
-  //   }
-  // })
-
-  colorStars(Math.ceil(Math.random() * 5))
+  //by Andrei: to properly dispose of the dialog element on Escape key press
+  //works, but throws an exception
+  document.body.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      try {
+        document.querySelector('.results-section').removeChild(dialogbox);
+      } catch (error) {
+        console.error("Caught an exception:", error);
+      }
+    }
+  })
+  colorStars(rating)
 }
 
 
@@ -283,16 +295,6 @@ function clearResults() {
   }
 }
 
-//by Andrei : to see the styling changes we make to the modal
-const modal = document.querySelector('.modal')
-const openModal = document.querySelector('.result__get-recipe')
-const closeModal = document.querySelector('.modal__close')
-closeModal.addEventListener('click', () => modal.style.display = 'none')
-openModal.addEventListener('click', () => modal.style.display = 'block')
-
-
-
-
 function colorStars(score) {
   for (let i = 1; i <= 5; i++) {
     const star = document.querySelector(`.fa-star:nth-child(${i})`);
@@ -304,4 +306,14 @@ function colorStars(score) {
 }
 
 
-//static modal functionality
+
+
+//by Andrei : static modal functionality
+
+
+//by Andrei : to see the styling changes we make to the modal
+const modal = document.querySelector('.modal')
+const openModal = document.querySelector('.result__get-recipe')
+const closeModal = document.querySelector('.modal__close')
+closeModal.addEventListener('click', () => modal.style.display = 'none')
+openModal.addEventListener('click', () => modal.style.display = 'block')
