@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-const API_KEY = "e382cd2d05mshbe255d4b9009f46p177e2ajsn5caf5ffa3f4c";
+const API_KEY = "c0ceab46e0msh0eadabf65682e61p12dd5ejsnbcab6b2c9a32";
 
 // Fetching AutoComplete the User input
 
