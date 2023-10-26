@@ -21,10 +21,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const API_KEY = "c0ceab46e0msh0eadabf65682e61p12dd5ejsnbcab6b2c9a32";
 
-// Fetching AutoComplete the User input
 
+ const RATE_LIMIT = 5; // Requests per second
+
+const fetchQueue = []; // Queue to manage fetch requests
+
+async function executeFetchQueue() {
+  while (fetchQueue.length > 0) {
+    const { recipeName, originalName } = fetchQueue.shift();
+    await fetchThumbnailVideoDescription(recipeName, originalName);
+    await new Promise((resolve) => setTimeout(resolve, 1000 / RATE_LIMIT));
+  }
+}
+  // Fetching AutoComplete the User input
 async function Autocomplete(recipeName) {
-
   // //by Andrei : ot make it easy to add elements and check styling. Will require commenting (overriding) out actual APi functionality. DO NOT DELETE
   // if (localStorage['resultForLS']) {
   //   fetchThumbnailVideoDescription('chicken breast')
@@ -36,26 +46,23 @@ async function Autocomplete(recipeName) {
     method: "GET",
     headers: {
       "X-RapidAPI-Key": API_KEY,
-      "X-RapidAPI-Host": "tasty.p.rapidapi.com"
-    }
+      "X-RapidAPI-Host": "tasty.p.rapidapi.com",
+    },
   };
 
   try {
     const response = await fetch(url, options);
     const result = await response.json();
-    console.log(result)
-    let firstResultFetched = false; //  1 result is enough for now -testing purpose
+    console.log(result);
 
+    fetchQueue.length = 0; // Clear the fetchQueue
     for (const element of result.results) {
       if (element.display.toLowerCase() !== recipeName.toLowerCase()) {
-        if (firstResultFetched) {
-          break;
-        }
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1-second delay
-        fetchThumbnailVideoDescription(element.display);
-        firstResultFetched = true;
+        fetchQueue.push({ recipeName: element.display, originalName: recipeName });
       }
     }
+
+    executeFetchQueue(); // Start processing the fetch queue
   } catch (error) {
     console.error(error);
   }
@@ -81,21 +88,70 @@ async function fetchThumbnailVideoDescription(recipeName) {
     }
 
     const data = await response.json();
-    console.log(data)
+    console.log(data.results[0])
     if (Array.isArray(data.results) && data.results.length > 0) {
       const thumbnail = data.results[0].thumbnail_url;
       const video_url = data.results[0].original_video_url;
       const description = data.results[0].description;
-
-      createRecipe(recipeName, thumbnail, video_url, description);
-
-
-      const resultForLS = { //can comment out once LS is set
-        'recipeName': recipeName,
-        'thumbnail': thumbnail,
-        'video_url': video_url,
-        'description': description
+      const countryTag = () => {
+        let result = ''
+        data.results[0]?.tags.filter((entry) => {
+          if (entry.root_tag_type === 'cuisine' && entry.display_name !== 'Cuisine')
+            result += entry.display_name
+        });
+        return result
       }
+      const rating = Math.ceil(data.results[0].user_ratings.score * 5)
+      const yields = data.results[0].yields
+      const cookTime = data.results[0]?.total_time_tier?.display_tier
+      const instructionsTag = data.results[0]?.instructions
+      const nutrition = () => {
+        const obj = data.results[0]?.nutrition
+        console.log(obj)
+        let temp = ''
+        let result = ''
+        if (Object.keys(obj).length > 0) {
+          for (const key in obj) {
+            if (obj.hasOwnProperty(key) && key !== 'updated_at') {
+              temp += `${key}: ${obj[key]}, `;
+            }
+          }
+          temp.slice(0, -2).split(',').forEach(item => {
+            result += `<li>${item}</li>`
+          })
+        }
+        return result
+      }
+      const difficultyTag = () => {
+        const master = data.results[0]?.tags;
+        const filteredDifficultyTags = master.filter((entry) => {
+          return (
+            entry.root_tag_type === 'difficulty' &&
+            (entry.display_name === 'Easy' ||
+              entry.display_name === 'Medium' ||
+              entry.display_name === 'Difficult' ||
+              entry.display_name === 'Hard')
+          );
+        });
+        const result = filteredDifficultyTags.map((entry) => entry.display_name);
+        return result;
+      };
+
+      createRecipe(recipeName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
+
+
+      // const resultForLS = { //can comment out once LS is set
+      //   'recipeName': recipeName,
+      //   'thumbnail': thumbnail,
+      //   'video_url': video_url,
+      //   'description': description,
+      //   'country': countryTag,
+      //   'rating': rating,
+      //   'yields': yields,
+      //   'cookTime': cookTime
+      // }
+      // localStorage.setItem('resultForLS', JSON.stringify(resultForLS))
+
     } else {
       console.error("No results found in thumbnail API for:", recipeName);
     }
@@ -105,19 +161,22 @@ async function fetchThumbnailVideoDescription(recipeName) {
 
   // // by Andrei : to make it easy to add elements and check styling. Will require commenting (overriding) out actual API functionality.
   // // by Andrei: set LS for faster display of search result (mock result will aways display 'chicken')  DO NOT DELETE
-  //   if (!localStorage['resultForLS']) {
-  //     localStorage.setItem('resultForLS', JSON.stringify(resultForLS))
-  //   } else { console.log('exists') }
+  // if (!localStorage['resultForLS']) {
+  //   localStorage.setItem('resultForLS', JSON.stringify(resultForLS))
+  // } else { console.log('exists') }
 
-  //   const fromLS = JSON.parse(localStorage['resultForLS'])
-  //   console.log(fromLS)
-  //   createRecipe(fromLS['recipeName'], fromLS['thumbnail'], fromLS['video_url'], fromLS['description']);
-  //   //END
+  // const fromLS = JSON.parse(localStorage['resultForLS'])
+  // console.log(fromLS)
+  // createRecipe(fromLS['recipeName'], fromLS['thumbnail'], fromLS['video_url'], fromLS['description']);
+  // const dataMea = JSON.parse(localStorage.getItem('entire data'))
+  // console.log(dataMea.results[0].yields)
+  // //END
+
 }
 
 //Creating the dynamic receipe content box
 
-function createRecipe(recipeName, img_url, video_url, description) {
+function createRecipe(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
   const box = document.createElement("div");
   const resultIntro = document.createElement("div");
   resultIntro.classList.add("results__result--intro");
@@ -133,7 +192,7 @@ function createRecipe(recipeName, img_url, video_url, description) {
   img.src = img_url;
 
   button.addEventListener('click', () => {
-    addDialog(recipeName, img_url, video_url, description);
+    addDialog(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
   });
 
 
@@ -163,10 +222,13 @@ function Capitalize(name) {
   return result
 }
 
+
+
+
 // Function for view Recipe button
-function addDialog(name, url, video_url, description) {
-  const dialogbox = document.createElement('dialog');
-  dialogbox.classList.add('modal');
+function addDialog(name, url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
+  const modal = document.createElement('div');
+  modal.classList.add('modal');
 
   const close = document.createElement('button');
   close.classList.add('modal__close');
@@ -185,30 +247,30 @@ function addDialog(name, url, video_url, description) {
   list.classList.add('modal__tags')
 
   const country = document.createElement('li')
-  country.textContent = 'to be decided'.toUpperCase()
+  country.textContent = countryTag()
+
+  const difficulty = document.createElement('li')
+  difficulty.textContent += `Difficulty: ${difficultyTag()}`
 
   const stars = document.createElement('li')
   stars.classList.add('modal-tag__rating')
   stars.innerHTML = '<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>'
-  list.append(country, stars)
+  list.append(country, difficulty, stars)
 
 
   const info = document.createElement('div')
   info.classList.add('modal__info')
 
-  const servings = document.createElement('div')
-  const servingTitle = document.createElement('h4')
-  servingTitle.textContent = 'Servings: '
-  const servingNumber = document.createElement('p')
-  servingNumber.textContent = '100?'
 
+  const servings = document.createElement('h4')
+  servings.textContent = yields
 
   const timeInfo = document.createElement('div')
   const timeTitle = document.createElement('h4')
-  timeTitle.textContent = 'Cook Time: '
+  timeTitle.textContent = 'Cooking Time: '
   const timeNumber = document.createElement('p')
-  timeNumber.textContent = '100?'
-  servings.append(servingTitle, servingNumber)
+  timeNumber.textContent = cookTime
+
   timeInfo.append(timeTitle, timeNumber)
   info.append(servings, timeInfo)
 
@@ -222,9 +284,24 @@ function addDialog(name, url, video_url, description) {
 
   const instructionsTitle = document.createElement('h4')
   instructionsTitle.textContent = 'Instructions: '
-  const instructionsText = document.createElement('p');
+  const instructionsText = document.createElement('ol');
   instructionsText.classList.add('modal__instructions');
-  instructionsText.textContent = description;
+  instructionsText.innerHTML = getInstructions(instructionsTag);
+
+  function getInstructions(data) {
+
+    result = ''
+    for (let i = 0; i < data.length; i++) {
+      result += `
+  <li>
+  ${data[i].display_text}
+  </li>
+`
+    }
+    return result
+  }
+
+
 
   const linkContainer = document.createElement('div')
   linkContainer.classList.add('modal__btn-wrapper')
@@ -239,37 +316,41 @@ function addDialog(name, url, video_url, description) {
   details.classList.add('modal__nutrition')
   const summary = document.createElement('summary')
   summary.textContent = 'Nutrition Information'
-  const para = document.createElement('p')
-  para.textContent = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do  eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut  enim ad minim veniam, quis nostrud exercitation ullamco laboris   nisi ut aliquip ex ea commodo consequat. Duis aute irure dolo   in reprehenderit in voluptate velit esse cillum dolore eu fugiat  nulla pariatur. Excepteur sint occaecat cupidatat non proident,  sunt in culpa qui officia deserunt mollit anim'
-  details.append(summary, para)
+  const nutritionList = document.createElement('ul')
+
+  nutritionList.innerHTML = nutrition()
+
+  details.append(summary, nutritionList)
 
 
   //Need to work on other things to display.
 
-  dialogbox.append(close, mealName, mealImage);
-  dialogbox.append(list, info)
-  dialogbox.append(ingredientsTitle, ingredientsText);
-  dialogbox.append(instructionsTitle, instructionsText);
-  dialogbox.append(linkContainer, details);
+  modal.append(close, mealName, mealImage);
+  modal.append(list, info)
+  modal.append(ingredientsTitle, ingredientsText);
+  modal.append(instructionsTitle, instructionsText);
+  modal.append(linkContainer, details);
 
 
-  document.body.appendChild(dialogbox);
-  dialogbox.showModal();
+  document.querySelector('.results-section').appendChild(modal);
+  modal.style.display = 'block';
 
   close.addEventListener('click', function () {
-    dialogbox.close();
-    document.body.removeChild(dialogbox);
+    document.querySelector('.results-section').removeChild(modal);
   });
 
-  // // //by Andrei: to properly dispose of the dialog element on Escape key press//but it doesn't work
-  // document.body.addEventListener('keypress', (e) => {
-  //   if (e.key === 'Escape') {
-  //     dialogbox.close();
-  //     document.body.removeChild(dialogbox);
-  //   }
-  // })
-
-  colorStars(Math.ceil(Math.random() * 5))
+  //by Andrei: to properly dispose of the dialog element on Escape key press
+  //works, but throws an exception
+  document.body.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      try {
+        document.querySelector('.results-section').removeChild(modal);
+      } catch (error) {
+        console.error("Caught an exception:", error);
+      }
+    }
+  })
+  colorStars(rating)
 }
 
 
@@ -283,16 +364,6 @@ function clearResults() {
   }
 }
 
-//by Andrei : to see the styling changes we make to the modal
-const modal = document.querySelector('.modal')
-const openModal = document.querySelector('.result__get-recipe')
-const closeModal = document.querySelector('.modal__close')
-closeModal.addEventListener('click', () => modal.style.display = 'none')
-openModal.addEventListener('click', () => modal.style.display = 'block')
-
-
-
-
 function colorStars(score) {
   for (let i = 1; i <= 5; i++) {
     const star = document.querySelector(`.fa-star:nth-child(${i})`);
@@ -300,8 +371,17 @@ function colorStars(score) {
       star.style.color = 'rgb(255, 196, 0)';
     }
   }
-  console.log(score)
+  console.log('the modal should display:', score, 'stars')
 }
 
 
-//static modal functionality
+
+
+//by Andrei : static modal functionality
+
+//by Andrei : to see the styling changes we make to the modal
+const modal = document.querySelector('.modal')
+const openModal = document.querySelector('.result__get-recipe')
+const closeModal = document.querySelector('.modal__close')
+closeModal.addEventListener('click', () => modal.style.display = 'none')
+openModal.addEventListener('click', () => modal.style.display = 'block')
