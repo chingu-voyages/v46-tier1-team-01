@@ -91,8 +91,36 @@ async function fetchThumbnailVideoDescription(recipeName) {
       const yields = data.results[0].yields
       const cookTime = data.results[0]?.total_time_tier?.display_tier
       const instructionsTag = data.results[0]?.instructions
-      const difficulty = data.results[0]?.instructions
-      const nutrition = data.results[0]?.instructions
+
+      const nutrition = () => {
+        const obj = data.results[0]?.nutrition
+        let result = ''
+        for (const key in obj) {
+          if (obj.hasOwnProperty(key) && key !== 'updated_at') {
+            result += `${key}: ${obj[key]}, `;
+          }
+        }
+        result = result.slice(0, -2);
+        return result
+      }
+      const difficulty = () => {
+        const master = data.results[0]?.tags;
+        const filteredDifficultyTags = master.filter((entry) => {
+          return (
+            entry.root_tag_type === 'difficulty' &&
+            (entry.display_name === 'Easy' ||
+              entry.display_name === 'Medium' ||
+              entry.display_name === 'Difficult' ||
+              entry.display_name === 'Hard')
+          );
+        });
+        console.log(filteredDifficultyTags)
+        const result = filteredDifficultyTags.map((entry) => entry.display_name);
+        return result;
+      };
+
+
+
 
 
       createRecipe(recipeName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, instructionsTag);
@@ -180,6 +208,9 @@ function Capitalize(name) {
   return result
 }
 
+
+
+
 // Function for view Recipe button
 function addDialog(name, url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag) {
   const modal = document.createElement('div');
@@ -236,17 +267,24 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
 
   const instructionsTitle = document.createElement('h4')
   instructionsTitle.textContent = 'Instructions: '
-  const instructionsText = document.createElement('p');
+  const instructionsText = document.createElement('ol');
   instructionsText.classList.add('modal__instructions');
-  instructionsText.textContent = getInstructions(instructionsTag);
+  instructionsText.innerHTML = getInstructions(instructionsTag);
 
   function getInstructions(data) {
-    let display = ''
+
+    result = ''
     for (let i = 0; i < data.length; i++) {
-      display += `#${i + 1} ${data[i].display_text} \n `
+      result += `
+  <li>
+  ${data[i].display_text}
+  </li>
+`
     }
-    return display
+    return result
   }
+
+
 
   const linkContainer = document.createElement('div')
   linkContainer.classList.add('modal__btn-wrapper')
