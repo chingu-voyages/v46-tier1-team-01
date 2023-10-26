@@ -43,7 +43,6 @@ async function Autocomplete(recipeName) {
   try {
     const response = await fetch(url, options);
     const result = await response.json();
-    console.log(result)
     let firstResultFetched = false; //  1 result is enough for now -testing purpose
 
     for (const element of result.results) {
@@ -81,17 +80,56 @@ async function fetchThumbnailVideoDescription(recipeName) {
     }
 
     const data = await response.json();
-    console.log(data)
+    console.log(data.results[0])
     if (Array.isArray(data.results) && data.results.length > 0) {
       const thumbnail = data.results[0].thumbnail_url;
       const video_url = data.results[0].original_video_url;
       const description = data.results[0].description;
-      const countryTag = data.results[0].tags[0].display_name
+      const countryTag = () => {
+        let result = ''
+        data.results[0]?.tags.filter((entry) => {
+          if (entry.root_tag_type === 'cuisine' && entry.display_name !== 'Cuisine')
+            result += entry.display_name
+        });
+        return result
+      }
       const rating = Math.ceil(data.results[0].user_ratings.score * 5)
       const yields = data.results[0].yields
       const cookTime = data.results[0]?.total_time_tier?.display_tier
+      const instructionsTag = data.results[0]?.instructions
+      const nutrition = () => {
+        const obj = data.results[0]?.nutrition
+        console.log(obj)
+        let temp = ''
+        let result = ''
+        if (Object.keys(obj).length > 0) {
+          for (const key in obj) {
+            if (obj.hasOwnProperty(key) && key !== 'updated_at') {
+              temp += `${key}: ${obj[key]}, `;
+            }
+          }
+          temp.slice(0, -2).split(',').forEach(item => {
+            result += `<li>${item}</li>`
+          })
+        }
+        return result
+      }
+      const difficultyTag = () => {
+        const master = data.results[0]?.tags;
+        const filteredDifficultyTags = master.filter((entry) => {
+          return (
+            entry.root_tag_type === 'difficulty' &&
+            (entry.display_name === 'Easy' ||
+              entry.display_name === 'Medium' ||
+              entry.display_name === 'Difficult' ||
+              entry.display_name === 'Hard')
+          );
+        });
+        const result = filteredDifficultyTags.map((entry) => entry.display_name);
+        return result;
+      };
 
-      createRecipe(recipeName, thumbnail, video_url, description, countryTag, rating, cookTime, yields);
+      createRecipe(recipeName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
 
 
       // const resultForLS = { //can comment out once LS is set
@@ -130,7 +168,7 @@ async function fetchThumbnailVideoDescription(recipeName) {
 
 //Creating the dynamic receipe content box
 
-function createRecipe(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields) {
+function createRecipe(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
   const box = document.createElement("div");
   const resultIntro = document.createElement("div");
   resultIntro.classList.add("results__result--intro");
@@ -146,7 +184,7 @@ function createRecipe(recipeName, img_url, video_url, description, countryTag, r
   img.src = img_url;
 
   button.addEventListener('click', () => {
-    addDialog(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields);
+    addDialog(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
   });
 
 
@@ -176,8 +214,10 @@ function Capitalize(name) {
   return result
 }
 
+
+
 // Function for view Recipe button
-function addDialog(name, url, video_url, description, countryTag, rating, cookTime, yields) {
+function addDialog(name, url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
   const modal = document.createElement('div');
   modal.classList.add('modal');
 
@@ -198,12 +238,15 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
   list.classList.add('modal__tags')
 
   const country = document.createElement('li')
-  country.textContent = countryTag.toUpperCase()
+  country.textContent = countryTag()
+
+  const difficulty = document.createElement('li')
+  difficulty.textContent += `Difficulty: ${difficultyTag()}`
 
   const stars = document.createElement('li')
   stars.classList.add('modal-tag__rating')
   stars.innerHTML = '<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>'
-  list.append(country, stars)
+  list.append(country, difficulty, stars)
 
 
   const info = document.createElement('div')
@@ -232,9 +275,24 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
 
   const instructionsTitle = document.createElement('h4')
   instructionsTitle.textContent = 'Instructions: '
-  const instructionsText = document.createElement('p');
+  const instructionsText = document.createElement('ol');
   instructionsText.classList.add('modal__instructions');
-  instructionsText.textContent = description;
+  instructionsText.innerHTML = getInstructions(instructionsTag);
+
+  function getInstructions(data) {
+
+    result = ''
+    for (let i = 0; i < data.length; i++) {
+      result += `
+  <li>
+  ${data[i].display_text}
+  </li>
+`
+    }
+    return result
+  }
+
+
 
   const linkContainer = document.createElement('div')
   linkContainer.classList.add('modal__btn-wrapper')
@@ -249,9 +307,11 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
   details.classList.add('modal__nutrition')
   const summary = document.createElement('summary')
   summary.textContent = 'Nutrition Information'
-  const para = document.createElement('p')
-  para.textContent = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do  eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut  enim ad minim veniam, quis nostrud exercitation ullamco laboris   nisi ut aliquip ex ea commodo consequat. Duis aute irure dolo   in reprehenderit in voluptate velit esse cillum dolore eu fugiat  nulla pariatur. Excepteur sint occaecat cupidatat non proident,  sunt in culpa qui officia deserunt mollit anim'
-  details.append(summary, para)
+  const nutritionList = document.createElement('ul')
+
+  nutritionList.innerHTML = nutrition()
+
+  details.append(summary, nutritionList)
 
 
   //Need to work on other things to display.
@@ -302,7 +362,7 @@ function colorStars(score) {
       star.style.color = 'rgb(255, 196, 0)';
     }
   }
-  console.log(score)
+  console.log('the modal should display:', score, 'stars')
 }
 
 
@@ -310,9 +370,9 @@ function colorStars(score) {
 
 //by Andrei : static modal functionality
 
-// //by Andrei : to see the styling changes we make to the modal
-// const modal = document.querySelector('.modal')
-// const openModal = document.querySelector('.result__get-recipe')
-// const closeModal = document.querySelector('.modal__close')
-// closeModal.addEventListener('click', () => modal.style.display = 'none')
-// openModal.addEventListener('click', () => modal.style.display = 'block')
+//by Andrei : to see the styling changes we make to the modal
+const modal = document.querySelector('.modal')
+const openModal = document.querySelector('.result__get-recipe')
+const closeModal = document.querySelector('.modal__close')
+closeModal.addEventListener('click', () => modal.style.display = 'none')
+openModal.addEventListener('click', () => modal.style.display = 'block')
