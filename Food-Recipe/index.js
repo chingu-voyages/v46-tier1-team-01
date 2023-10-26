@@ -43,7 +43,6 @@ async function Autocomplete(recipeName) {
   try {
     const response = await fetch(url, options);
     const result = await response.json();
-
     let firstResultFetched = false; //  1 result is enough for now -testing purpose
 
     for (const element of result.results) {
@@ -214,7 +213,6 @@ function Capitalize(name) {
   }
   return result
 }
-
 
 
 
