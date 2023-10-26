@@ -89,7 +89,7 @@ async function fetchThumbnailVideoDescription(recipeName) {
       const countryTag = () => {
         let result = ''
         data.results[0]?.tags.filter((entry) => {
-          if (entry.root_tag_type === 'cuisine')
+          if (entry.root_tag_type === 'cuisine' && entry.display_name !== 'Cuisine')
             result += entry.display_name
         });
         return result
@@ -100,16 +100,19 @@ async function fetchThumbnailVideoDescription(recipeName) {
       const instructionsTag = data.results[0]?.instructions
       const nutrition = () => {
         const obj = data.results[0]?.nutrition
+        console.log(obj)
         let temp = ''
         let result = ''
-        for (const key in obj) {
-          if (obj.hasOwnProperty(key) && key !== 'updated_at') {
-            temp += `${key}: ${obj[key]}, `;
+        if (Object.keys(obj).length > 0) {
+          for (const key in obj) {
+            if (obj.hasOwnProperty(key) && key !== 'updated_at') {
+              temp += `${key}: ${obj[key]}, `;
+            }
           }
+          temp.slice(0, -2).split(',').forEach(item => {
+            result += `<li>${item}</li>`
+          })
         }
-        temp.slice(0, -2).split(',').forEach(item => {
-          result += `<li>${item}</li>`
-        })
         return result
       }
       const difficultyTag = () => {
