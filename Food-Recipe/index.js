@@ -32,7 +32,7 @@ async function executeFetchQueue() {
     await new Promise((resolve) => setTimeout(resolve, 1000 / RATE_LIMIT));
   }
 }
-  // Fetching AutoComplete the User input
+// Fetching AutoComplete the User input
 async function Autocomplete(recipeName) {
   // //by Andrei : ot make it easy to add elements and check styling. Will require commenting (overriding) out actual APi functionality. DO NOT DELETE
   // if (localStorage['resultForLS']) {
@@ -96,7 +96,7 @@ async function fetchThumbnailVideoDescription(recipeName) {
         let result = ''
         data.results[0]?.tags.filter((entry) => {
           if (entry.root_tag_type === 'cuisine' && entry.display_name !== 'Cuisine')
-            result += entry.display_name
+            result += `${entry.display_name} `
         });
         return result
       }
@@ -340,17 +340,17 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
   //by Andrei: to properly dispose of the dialog element on Escape key press
   //works, but throws an exception
   document.body.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    try {
-      const resultsSection = document.querySelector('.results-section');
-      if (resultsSection.contains(modal)) {
-        resultsSection.removeChild(modal);
+    if (e.key === 'Escape') {
+      try {
+        const resultsSection = document.querySelector('.results-section');
+        if (resultsSection.contains(modal)) {
+          resultsSection.removeChild(modal);
+        }
+      } catch (error) {
+        console.error("Caught an exception:", error);
       }
-    } catch (error) {
-      console.error("Caught an exception:", error);
     }
-  }
-});
+  });
   colorStars(rating)
 }
 
