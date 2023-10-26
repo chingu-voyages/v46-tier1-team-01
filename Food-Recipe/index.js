@@ -21,10 +21,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const API_KEY = "c0ceab46e0msh0eadabf65682e61p12dd5ejsnbcab6b2c9a32";
 
+const RATE_LIMIT = 5; // Requests per second
+
+const fetchQueue = []; // Queue to manage fetch requests
+
+async function executeFetchQueue() {
+  while (fetchQueue.length > 0) {
+    const { recipeName, originalName } = fetchQueue.shift();
+    await fetchThumbnailVideoDescription(recipeName, originalName);
+    await new Promise((resolve) => setTimeout(resolve, 1000 / RATE_LIMIT));
+  }
+}
 // Fetching AutoComplete the User input
-
 async function Autocomplete(recipeName) {
-
   // //by Andrei : ot make it easy to add elements and check styling. Will require commenting (overriding) out actual APi functionality. DO NOT DELETE
   // if (localStorage['resultForLS']) {
   //   fetchThumbnailVideoDescription('chicken breast')
@@ -43,18 +52,16 @@ async function Autocomplete(recipeName) {
   try {
     const response = await fetch(url, options);
     const result = await response.json();
-    let firstResultFetched = false; //  1 result is enough for now -testing purpose
+    console.log(result);
 
+    fetchQueue.length = 0; // Clear the fetchQueue
     for (const element of result.results) {
       if (element.display.toLowerCase() !== recipeName.toLowerCase()) {
-        if (firstResultFetched) {
-          break;
-        }
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1-second delay
-        fetchThumbnailVideoDescription(element.display);
-        firstResultFetched = true;
+        fetchQueue.push({ recipeName: element.display, originalName: recipeName });
       }
     }
+
+    executeFetchQueue(); // Start processing the fetch queue
   } catch (error) {
     console.error(error);
   }
@@ -89,7 +96,7 @@ async function fetchThumbnailVideoDescription(recipeName) {
         let result = ''
         data.results[0]?.tags.filter((entry) => {
           if (entry.root_tag_type === 'cuisine' && entry.display_name !== 'Cuisine')
-            result += entry.display_name
+            result += `${entry.display_name} `
         });
         return result
       }
@@ -335,12 +342,15 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
   document.body.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       try {
-        document.querySelector('.results-section').removeChild(modal);
+        const resultsSection = document.querySelector('.results-section');
+        if (resultsSection.contains(modal)) {
+          resultsSection.removeChild(modal);
+        }
       } catch (error) {
         console.error("Caught an exception:", error);
       }
     }
-  })
+  });
   colorStars(rating)
 }
 
