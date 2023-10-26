@@ -342,14 +342,18 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
   //by Andrei: to properly dispose of the dialog element on Escape key press
   //works, but throws an exception
   document.body.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      try {
-        document.querySelector('.results-section').removeChild(modal);
-      } catch (error) {
-        console.error("Caught an exception:", error);
+  if (e.key === 'Escape') {
+    try {
+      const resultsSection = document.querySelector('.results-section');
+      if (resultsSection.contains(modal)) {
+        resultsSection.removeChild(modal);
       }
+    } catch (error) {
+      console.error("Caught an exception:", error);
     }
-  })
+  }
+});
+
   colorStars(rating)
 }
 
