@@ -266,13 +266,28 @@ button:hover {
 
   width: 95%;
   max-height: 90%;
-  overflow-y: auto;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: var(--clr-black) transparent;
 
   border-radius: 1em;
   padding: 1em 2em 2em 2em;
   border: 0.2em solid var(--clr-black);
   background-color: var(--clr-white);
   z-index: 2;
+}
+
+.modal::-webkit-scrollbar {
+  width: 10px;
+}
+
+.modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal::-webkit-scrollbar-thumb {
+  background-color: var(--clr-black);
+  border-radius: 20px;
 }
 
 .modal h3 {
