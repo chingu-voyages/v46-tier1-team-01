@@ -86,7 +86,16 @@ async function fetchThumbnailVideoDescription(recipeName) {
       const thumbnail = data.results[0].thumbnail_url;
       const video_url = data.results[0].original_video_url;
       const description = data.results[0].description;
-      const countryTag = data.results[0].tags[0].display_name
+      const countryTag = () => {
+        let result = ''
+        data.results[0]?.tags.filter((entry) => {
+          if (entry.root_tag_type === 'cuisine')
+            result += entry.display_name
+        });
+        return result
+      }
+
+
       const rating = Math.ceil(data.results[0].user_ratings.score * 5)
       const yields = data.results[0].yields
       const cookTime = data.results[0]?.total_time_tier?.display_tier
@@ -233,7 +242,7 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
   list.classList.add('modal__tags')
 
   const country = document.createElement('li')
-  country.textContent = countryTag.toUpperCase()
+  country.textContent = countryTag()
 
   const stars = document.createElement('li')
   stars.classList.add('modal-tag__rating')
