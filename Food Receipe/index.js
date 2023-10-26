@@ -90,8 +90,12 @@ async function fetchThumbnailVideoDescription(recipeName) {
       const rating = Math.ceil(data.results[0].user_ratings.score * 5)
       const yields = data.results[0].yields
       const cookTime = data.results[0]?.total_time_tier?.display_tier
+      const instructionsTag = data.results[0]?.instructions
+      const difficulty = data.results[0]?.instructions
+      const nutrition = data.results[0]?.instructions
 
-      createRecipe(recipeName, thumbnail, video_url, description, countryTag, rating, cookTime, yields);
+
+      createRecipe(recipeName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, instructionsTag);
 
 
       // const resultForLS = { //can comment out once LS is set
@@ -130,7 +134,7 @@ async function fetchThumbnailVideoDescription(recipeName) {
 
 //Creating the dynamic receipe content box
 
-function createRecipe(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields) {
+function createRecipe(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag) {
   const box = document.createElement("div");
   const resultIntro = document.createElement("div");
   resultIntro.classList.add("results__result--intro");
@@ -146,7 +150,7 @@ function createRecipe(recipeName, img_url, video_url, description, countryTag, r
   img.src = img_url;
 
   button.addEventListener('click', () => {
-    addDialog(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields);
+    addDialog(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag);
   });
 
 
@@ -177,7 +181,7 @@ function Capitalize(name) {
 }
 
 // Function for view Recipe button
-function addDialog(name, url, video_url, description, countryTag, rating, cookTime, yields) {
+function addDialog(name, url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag) {
   const modal = document.createElement('div');
   modal.classList.add('modal');
 
@@ -234,7 +238,15 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
   instructionsTitle.textContent = 'Instructions: '
   const instructionsText = document.createElement('p');
   instructionsText.classList.add('modal__instructions');
-  instructionsText.textContent = description;
+  instructionsText.textContent = getInstructions(instructionsTag);
+
+  function getInstructions(data) {
+    let display = ''
+    for (let i = 0; i < data.length; i++) {
+      display += `#${i + 1} ${data[i].display_text} \n `
+    }
+    return display
+  }
 
   const linkContainer = document.createElement('div')
   linkContainer.classList.add('modal__btn-wrapper')
