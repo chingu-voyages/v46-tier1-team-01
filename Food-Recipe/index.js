@@ -21,8 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const API_KEY = "c0ceab46e0msh0eadabf65682e61p12dd5ejsnbcab6b2c9a32";
 
-
- const RATE_LIMIT = 5; // Requests per second
+const RATE_LIMIT = 5; // Requests per second
 
 const fetchQueue = []; // Queue to manage fetch requests
 
@@ -46,8 +45,8 @@ async function Autocomplete(recipeName) {
     method: "GET",
     headers: {
       "X-RapidAPI-Key": API_KEY,
-      "X-RapidAPI-Host": "tasty.p.rapidapi.com",
-    },
+      "X-RapidAPI-Host": "tasty.p.rapidapi.com"
+    }
   };
 
   try {
@@ -224,7 +223,6 @@ function Capitalize(name) {
 
 
 
-
 // Function for view Recipe button
 function addDialog(name, url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
   const modal = document.createElement('div');
@@ -353,7 +351,6 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
     }
   }
 });
-
   colorStars(rating)
 }
 
