@@ -266,10 +266,7 @@ button:hover {
 
   width: 95%;
   max-height: 90%;
-  overflow-y: scroll;
-  scrollbar-width: thin;
-  scrollbar-color: var(--clr-black) transparent;
-
+  overflow-y: auto;
   border-radius: 1em;
   padding: 1em 2em 2em 2em;
   border: 0.2em solid var(--clr-black);
@@ -286,8 +283,11 @@ button:hover {
 }
 
 .modal::-webkit-scrollbar-thumb {
-  background-color: var(--clr-black);
+  background-color: #b1b1b1;
   border-radius: 20px;
+}
+.modal::-webkit-scrollbar-button {
+  background-color: transparent; /*Set the background color of the buttons. Give some padding to the top and bottom of the scrollbar. */
 }
 
 .modal h3 {
