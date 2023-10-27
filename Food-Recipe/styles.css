@@ -283,7 +283,14 @@ button:hover {
 }
 
 .modal::-webkit-scrollbar-thumb {
-  background-color: #b1b1b1;
+  background: rgb(58, 180, 170);
+  background: linear-gradient(
+    180deg,
+    rgba(58, 180, 170, 0) 1%,
+    rgba(215, 215, 215, 1) 10%,
+    rgba(215, 215, 215, 1) 90%,
+    rgba(124, 69, 252, 0) 100%
+  );
   border-radius: 20px;
 }
 .modal::-webkit-scrollbar-button {
@@ -390,6 +397,9 @@ footer {
 @media only screen and (min-width: 30rem) {
   .search-section form {
     grid-template-columns: 2fr 1fr;
+  }
+  .modal::-webkit-scrollbar-thumb {
+    background: #b1b1b1;
   }
 }
 
