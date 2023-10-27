@@ -267,6 +267,9 @@ button:hover {
   width: 95%;
   max-height: 90%;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(177, 177, 177) transparent;
+
   border-radius: 1em;
   padding: 1em 2em 2em 2em;
   border: 0.2em solid var(--clr-black);
