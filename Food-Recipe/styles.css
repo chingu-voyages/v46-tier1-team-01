@@ -267,12 +267,34 @@ button:hover {
   width: 95%;
   max-height: 90%;
   overflow-y: auto;
-
   border-radius: 1em;
   padding: 1em 2em 2em 2em;
   border: 0.2em solid var(--clr-black);
   background-color: var(--clr-white);
   z-index: 2;
+}
+
+.modal::-webkit-scrollbar {
+  width: 10px;
+}
+
+.modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal::-webkit-scrollbar-thumb {
+  background: rgb(58, 180, 170);
+  background: linear-gradient(
+    180deg,
+    rgba(58, 180, 170, 0) 1%,
+    rgba(215, 215, 215, 1) 10%,
+    rgba(215, 215, 215, 1) 90%,
+    rgba(124, 69, 252, 0) 100%
+  );
+  border-radius: 20px;
+}
+.modal::-webkit-scrollbar-button {
+  background-color: transparent; /*Set the background color of the buttons. Give some padding to the top and bottom of the scrollbar. */
 }
 
 .modal h3 {
@@ -375,6 +397,9 @@ footer {
 @media only screen and (min-width: 30rem) {
   .search-section form {
     grid-template-columns: 2fr 1fr;
+  }
+  .modal::-webkit-scrollbar-thumb {
+    background: #b1b1b1;
   }
 }
 
