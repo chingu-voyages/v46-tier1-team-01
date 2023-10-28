@@ -4,21 +4,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector("form");
   const searchInput = document.querySelector(".search__input");
   const nameElement = document.querySelector(".ingredient-searched");
-  
 
-  if (form && searchInput) {
-    form.addEventListener("submit", (event) => {
+
+  if (form && searchInput && nameElement) {
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
       const searched = document.createElement("h2");
       searched.textContent = `Your results for ${searchInput.value}`;
-      nameElement.innerHTML = " ";
+      nameElement.innerHTML = "";
       nameElement.appendChild(searched);
       clearResults();
-      responseCount=0;
-      Autocomplete(searchInput.value);
+      responseCount = 0;
+      await Autocomplete(searchInput.value);
     });
   } else {
-    console.error("The form or search input element is not found in the DOM.");
+    console.error("The form, search input, or name element is not found in the DOM.");
   }
 });
 
@@ -30,7 +30,7 @@ const fetchQueue = []; // Queue to manage fetch requests
 
 async function executeFetchQueue() {
   while (fetchQueue.length > 0) {
-    if(responseCount>=2){
+    if (responseCount >= 1) {
       break;
     }
     const { recipeName, originalName } = fetchQueue.shift();
@@ -39,21 +39,16 @@ async function executeFetchQueue() {
     responseCount++;
   }
 }
+
 // Fetching AutoComplete the User input
 async function Autocomplete(recipeName) {
-  // //by Andrei : ot make it easy to add elements and check styling. Will require commenting (overriding) out actual APi functionality. DO NOT DELETE
-  // if (localStorage['resultForLS']) {
-  //   fetchThumbnailVideoDescription('chicken breast')
-  // }
-  // //END
-
   const url = `https://tasty.p.rapidapi.com/recipes/auto-complete?prefix=${recipeName}`;
   const options = {
     method: "GET",
     headers: {
       "X-RapidAPI-Key": API_KEY,
-      "X-RapidAPI-Host": "tasty.p.rapidapi.com"
-    }
+      "X-RapidAPI-Host": "tasty.p.rapidapi.com",
+    },
   };
 
   try {
@@ -74,8 +69,7 @@ async function Autocomplete(recipeName) {
   }
 }
 
-//Fetching the Thumbnail from API
-
+// Fetching the Thumbnail from API
 async function fetchThumbnailVideoDescription(recipeName) {
   try {
     const response = await fetch(
@@ -84,8 +78,8 @@ async function fetchThumbnailVideoDescription(recipeName) {
         method: "GET",
         headers: {
           "X-RapidAPI-Key": API_KEY,
-          "X-RapidAPI-Host": "tasty.p.rapidapi.com"
-        }
+          "X-RapidAPI-Host": "tasty.p.rapidapi.com",
+        },
       }
     );
 
@@ -94,49 +88,50 @@ async function fetchThumbnailVideoDescription(recipeName) {
     }
 
     const data = await response.json();
-    console.log(data.results[0])
+    console.log(data.results[0]);
+
     if (Array.isArray(data.results) && data.results.length > 0) {
       const thumbnail = data.results[0].thumbnail_url;
       const video_url = data.results[0].original_video_url;
       const description = data.results[0].description;
+
       const countryTag = () => {
-        let result = ''
+        let result = "";
         data.results[0]?.tags.filter((entry) => {
-          if (entry.root_tag_type === 'cuisine' && entry.display_name !== 'Cuisine')
-            result += `${entry.display_name} `
+          if (entry.root_tag_type === "cuisine" && entry.display_name !== "Cuisine")
+            result += `${entry.display_name} `;
         });
-        return result
-      }
-      const rating = Math.ceil(data.results[0].user_ratings.score * 5)
-      const yields = data.results[0].yields
-      const cookTime = data.results[0]?.total_time_tier?.display_tier
-      const instructionsTag = data.results[0]?.instructions
+        return result;
+      };
+
+      const rating = Math.ceil(data.results[0].user_ratings.score * 5);
+      const yields = data.results[0].yields;
+      const cookTime = data.results[0]?.total_time_tier?.display_tier;
+      const instructionsTag = data.results[0]?.instructions;
+
       const nutrition = () => {
-        const obj = data.results[0]?.nutrition
-        console.log(obj)
-        let temp = ''
-        let result = ''
-        if (Object.keys(obj).length > 0) {
+        const obj = data.results[0]?.nutrition;
+        let result = "";
+        if (obj) {
           for (const key in obj) {
-            if (obj.hasOwnProperty(key) && key !== 'updated_at') {
-              temp += `${key}: ${obj[key]}, `;
+            if (obj.hasOwnProperty(key) && key !== "updated_at") {
+              result += `${key}: ${obj[key]}, `;
             }
           }
-          temp.slice(0, -2).split(',').forEach(item => {
-            result += `<li>${item}</li>`
-          })
+          result = result.slice(0, -2).split(',').map(item => `<li>${item}</li>`).join("");
         }
-        return result
-      }
+        return result;
+      };
+
       const difficultyTag = () => {
         const master = data.results[0]?.tags;
         const filteredDifficultyTags = master.filter((entry) => {
           return (
-            entry.root_tag_type === 'difficulty' &&
-            (entry.display_name === 'Easy' ||
-              entry.display_name === 'Medium' ||
-              entry.display_name === 'Difficult' ||
-              entry.display_name === 'Hard')
+            entry.root_tag_type === "difficulty" &&
+            (entry.display_name === "Easy" ||
+              entry.display_name === "Medium" ||
+              entry.display_name === "Difficult" ||
+              entry.display_name === "Hard")
           );
         });
         const result = filteredDifficultyTags.map((entry) => entry.display_name);
@@ -144,26 +139,13 @@ async function fetchThumbnailVideoDescription(recipeName) {
       };
 
       createRecipe(recipeName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
-
-
-      // const resultForLS = { //can comment out once LS is set
-      //   'recipeName': recipeName,
-      //   'thumbnail': thumbnail,
-      //   'video_url': video_url,
-      //   'description': description,
-      //   'country': countryTag,
-      //   'rating': rating,
-      //   'yields': yields,
-      //   'cookTime': cookTime
-      // }
-      // localStorage.setItem('resultForLS', JSON.stringify(resultForLS))
-
     } else {
       console.error("No results found in thumbnail API for:", recipeName);
     }
   } catch (error) {
     console.error(error);
   }
+}
 
   // // by Andrei : to make it easy to add elements and check styling. Will require commenting (overriding) out actual API functionality.
   // // by Andrei: set LS for faster display of search result (mock result will aways display 'chicken')  DO NOT DELETE
@@ -178,7 +160,7 @@ async function fetchThumbnailVideoDescription(recipeName) {
   // console.log(dataMea.results[0].yields)
   // //END
 
-}
+
 
 //Creating the dynamic receipe content box
 
@@ -220,151 +202,199 @@ function NoResults() {
   recipeContainer.appendChild(NoResult);
 }
 
-function Capitalize(name) {
-  result = ''
-  for (word of name.split(' ')) {
-    result += word[0].toUpperCase() + word.slice(1) + ' '
-  }
-  return result
-}
-
 
 
 // Function for view Recipe button
+
 function addDialog(name, url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
+  const modal = createModal();
+   const close = createCloseButton();
+  const mealName = createMealName(name);
+  const mealImage = createMealImage(url);
+  const list = createTagList(countryTag, difficultyTag);
+  const info = createInfoSection(yields, cookTime);
+  const ingredientsText = createIngredients(description);
+  const instructionsText = createInstructions(instructionsTag);
+  const linkContainer = createVideoLink(video_url);
+  const nutritionDetails = createNutritionDetails(nutrition);
+  modal.append(close, mealName, mealImage, list, info, ingredientsText, instructionsText, linkContainer, nutritionDetails);
+  document.querySelector('.results-section').appendChild(modal);
+  modal.classList.add('modal-active');
+
+  close.addEventListener('click', () => closeModal(modal));
+  document.body.addEventListener('keydown', (e) => handleKeyPress(e, modal));
+
+  colorStars(rating);
+}
+
+function createModal() {
   const modal = document.createElement('div');
   modal.classList.add('modal');
+  return modal;
+}
 
+function createCloseButton() {
   const close = document.createElement('button');
   close.classList.add('modal__close');
   close.innerHTML = '&#10006;';
+  return close;
+}
 
+
+function createMealName(name) {
   const mealName = document.createElement('h3');
   mealName.classList.add('modal__name');
   mealName.textContent = Capitalize(name);
+  return mealName;
+}
 
+function createMealImage(url) {
   const mealImage = document.createElement('img');
   mealImage.src = url;
   mealImage.alt = 'Meal Image';
   mealImage.classList.add('modal__image');
+  return mealImage;
+}
 
-  const list = document.createElement('ul')
-  list.classList.add('modal__tags')
+function createTagList(countryTag, difficultyTag) {
+  const list = document.createElement('ul');
+  list.classList.add('modal__tags');
 
-  const country = document.createElement('li')
-  country.textContent = countryTag()
+  const country = createTagItem(countryTag());
+  const difficulty = createTagItem(`Difficulty: ${difficultyTag()}`);
+  const stars = document.createElement('li');
+  stars.classList.add('modal-tag__rating');
+  stars.innerHTML = '<i class="fa-solid fa-star" style="color: rgb(255, 196, 0);"></i><i class="fa-solid fa-star" style="color: rgb(255, 196, 0);"></i><i class="fa-solid fa-star" style="color: rgb(255, 196, 0);"></i><i class="fa-solid fa-star" style="color: rgb(255, 196, 0);"></i><i class="fa-solid fa-star" style="color: rgb(255, 196, 0);"></i>';
+  list.append(country, difficulty, stars);
+  return list;
+}
 
-  const difficulty = document.createElement('li')
-  difficulty.textContent += `Difficulty: ${difficultyTag()}`
+function createTagItem(text) {
+  const item = document.createElement('li');
+  item.textContent = text;
+  return item;
+}
 
-  const stars = document.createElement('li')
-  stars.classList.add('modal-tag__rating')
-  stars.innerHTML = '<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>'
-  list.append(country, difficulty, stars)
+function createInfoSection(yields, cookTime) {
+  const info = document.createElement('div');
+  info.classList.add('modal__info');
 
+  const servings = createSubheading(yields);
+  const timeInfo = createSubheading('Cooking Time:', cookTime);
+ 
+  info.appendChild(servings[0]); 
+  info.appendChild(timeInfo[0]); 
+  info.appendChild(timeInfo[1]); 
 
-  const info = document.createElement('div')
-  info.classList.add('modal__info')
+  return info;
+}
 
+function createSubheading(title, text) {
+  const heading = document.createElement('h4');
+  heading.textContent = title;
 
-  const servings = document.createElement('h4')
-  servings.textContent = yields
-
-  const timeInfo = document.createElement('div')
-  const timeTitle = document.createElement('h4')
-  timeTitle.textContent = 'Cooking Time: '
-  const timeNumber = document.createElement('p')
-  timeNumber.textContent = cookTime
-
-  timeInfo.append(timeTitle, timeNumber)
-  info.append(servings, timeInfo)
-
-
-  const ingredientsTitle = document.createElement('h4')
-  ingredientsTitle.textContent = 'Ingredients: '
-  const ingredientsText = document.createElement('p');
-  ingredientsText.classList.add('modal__ingredients');
-  ingredientsText.textContent = 'Coriander chocolate peanut butter dip lavender lemonade blueberry pops red lentil curry hummus falafel bowl mint arugula salad fall coconut milk rich coconut cream.';
-
-
-  const instructionsTitle = document.createElement('h4')
-  instructionsTitle.textContent = 'Instructions: '
-  const instructionsText = document.createElement('ol');
-  instructionsText.classList.add('modal__instructions');
-  instructionsText.innerHTML = getInstructions(instructionsTag);
-
-  function getInstructions(data) {
-
-    result = ''
-    for (let i = 0; i < data.length; i++) {
-      result += `
-        <li>
-        ${data[i].display_text}
-        </li>
-      `
-    }
-    return result
+  if (text) {
+    const content = document.createElement('p');
+    content.textContent = text;
+    return [heading, content];
   }
 
+  return [heading];
+}
 
+function createIngredients(description) {
+  const ingredientsContainer = document.createElement('div'); 
 
-  const linkContainer = document.createElement('div')
-  linkContainer.classList.add('modal__btn-wrapper')
-  const video_link = document.createElement('a');
-  video_link.href = video_url;
-  video_link.target = "_blank";
-  video_link.textContent = 'Watch video';
-  video_link.classList.add('modal__video-link');
-  linkContainer.append(video_link)
+  const ingredientsTitle = document.createElement('h4');
+  ingredientsTitle.textContent = 'Ingredients';
 
-  const details = document.createElement('details')
-  details.classList.add('modal__nutrition')
-  const summary = document.createElement('summary')
-  summary.textContent = 'Nutrition Information'
-  const nutritionList = document.createElement('ul')
+  const ingredientsText = document.createElement('p');
+  ingredientsText.classList.add('modal__ingredients');
+  ingredientsText.textContent = description;
+  ingredientsContainer.appendChild(ingredientsTitle);
+  ingredientsContainer.appendChild(ingredientsText);
 
-  nutritionList.innerHTML = nutrition()
-
-  details.append(summary, nutritionList)
-
-
-  //Need to work on other things to display.
-
-  modal.append(close, mealName, mealImage);
-  modal.append(list, info)
-  modal.append(ingredientsTitle, ingredientsText);
-  modal.append(instructionsTitle, instructionsText);
-  modal.append(linkContainer, details);
-
-
-  document.querySelector('.results-section').appendChild(modal);
-  // modal.style.display = 'block';
-  modal.classList.add('modal-active');
-
-  close.addEventListener('click', function () {
-    document.querySelector('.results-section').removeChild(modal);
-  });
-
-  //by Andrei: to properly dispose of the dialog element on Escape key press
-  //works, but throws an exception
-  document.body.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      try {
-        const resultsSection = document.querySelector('.results-section');
-        if (resultsSection.contains(modal)) {
-          resultsSection.removeChild(modal);
-        }
-      } catch (error) {
-        console.error("Caught an exception:", error);
-      }
-    }
-  });
-  colorStars(rating)
+  return ingredientsContainer; 
 }
 
 
 
-// Function to clear existing results
+function createInstructions(instructionsTag) {
+  const instructions = document.createElement('ul');
+  instructions.classList.add('modal__instructions');
+
+  const subheading = document.createElement('h4');
+  subheading.textContent = 'Instructions:';
+  instructions.appendChild(subheading);
+
+  instructionsTag.forEach((instruction) => {
+    const listItem = document.createElement('li');
+    listItem.textContent = instruction.display_text;
+    instructions.appendChild(listItem);
+  });
+
+  return instructions;
+}
+
+
+function createVideoLink(video_url) {
+  const linkContainer = document.createElement('div');
+  linkContainer.classList.add('modal__btn-wrapper');
+  const video_link = document.createElement('a');
+  video_link.href = video_url;
+  video_link.target = '_blank';
+  video_link.textContent = 'Watch video';
+  video_link.classList.add('modal__video-link');
+  linkContainer.appendChild(video_link);
+  return linkContainer;
+}
+
+function createNutritionDetails(nutrition) {
+  const details = document.createElement('details');
+  details.classList.add('modal__nutrition');
+  const summary = document.createElement('summary');
+  summary.textContent = 'Nutrition Information';
+  const nutritionList = document.createElement('ul');
+  nutritionList.innerHTML = nutrition();
+  details.append(summary, nutritionList);
+  return details;
+}
+
+function closeModal(modal) {
+  const resultsSection = document.querySelector('.results-section');
+  if (resultsSection) {
+    resultsSection.removeChild(modal);
+  }
+}
+
+function handleKeyPress(event, modal) {
+  if (event.key === 'Escape') {
+    const resultsSection = document.querySelector('.results-section');
+    if (resultsSection && resultsSection.contains(modal)) {
+      resultsSection.removeChild(modal);
+    }
+  }
+}
+
+
+function colorStars(rating) {
+  for (let i = 1; i <= 5; i++) {
+    const star = document.querySelector(`.fa-star:nth-child(${i})`);
+    if (i <= rating) {
+      star.style.color = 'rgb(255, 196, 0)';
+    }
+  }
+}
+
+
+function Capitalize(text) {
+  result = ''
+  for (word of text.split(' ')) {
+    result += word[0].toUpperCase() + word.slice(1) + ' '
+  }
+  return result;
+}
+
 
 function clearResults() {
   const recipeContainer = document.querySelector(".results__container");
@@ -373,26 +403,14 @@ function clearResults() {
   }
 }
 
-function colorStars(score) {
-  for (let i = 1; i <= 5; i++) {
-    const star = document.querySelector(`.fa-star:nth-child(${i})`);
-    if (i <= score) {
-      star.style.color = 'rgb(255, 196, 0)';
-    }
-  }
-  console.log('the modal should display:', score, 'stars')
-}
 
+// //by Andrei : static modal functionality
 
-
-
-//by Andrei : static modal functionality
-
-//by Andrei : to see the styling changes we make to the modal
-const modal = document.querySelector('.modal')
-const openModal = document.querySelector('.result__get-recipe')
-const closeModal = document.querySelector('.modal__close')
-// closeModal.addEventListener('click', () => modal.style.display = 'none')
-// openModal.addEventListener('click', () => modal.style.display = 'block')
-closeModal.addEventListener('click', () => modal.classList.remove('modal-active'))
-openModal.addEventListener('click', () => modal.classList.add('modal-active'))
+// //by Andrei : to see the styling changes we make to the modal
+// const modal = document.querySelector('.modal')
+// const openModal = document.querySelector('.result__get-recipe')
+// const closeModal = document.querySelector('.modal__close')
+// // closeModal.addEventListener('click', () => modal.style.display = 'none')
+// // openModal.addEventListener('click', () => modal.style.display = 'block')
+// closeModal.addEventListener('click', () => modal.classList.remove('modal-active'))
+// openModal.addEventListener('click', () => modal.classList.add('modal-active'))
