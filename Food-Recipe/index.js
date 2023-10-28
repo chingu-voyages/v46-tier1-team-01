@@ -1,8 +1,10 @@
 //User Input
+let responseCount = 0;
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector("form");
   const searchInput = document.querySelector(".search__input");
   const nameElement = document.querySelector(".ingredient-searched");
+  
 
   if (form && searchInput) {
     form.addEventListener("submit", (event) => {
@@ -12,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
       nameElement.innerHTML = " ";
       nameElement.appendChild(searched);
       clearResults();
+      responseCount=0;
       Autocomplete(searchInput.value);
     });
   } else {
@@ -27,9 +30,13 @@ const fetchQueue = []; // Queue to manage fetch requests
 
 async function executeFetchQueue() {
   while (fetchQueue.length > 0) {
+    if(responseCount>=2){
+      break;
+    }
     const { recipeName, originalName } = fetchQueue.shift();
     await fetchThumbnailVideoDescription(recipeName, originalName);
     await new Promise((resolve) => setTimeout(resolve, 1000 / RATE_LIMIT));
+    responseCount++;
   }
 }
 // Fetching AutoComplete the User input
