@@ -291,10 +291,10 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
     result = ''
     for (let i = 0; i < data.length; i++) {
       result += `
-  <li>
-  ${data[i].display_text}
-  </li>
-`
+        <li>
+        ${data[i].display_text}
+        </li>
+      `
     }
     return result
   }
@@ -331,7 +331,8 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
 
 
   document.querySelector('.results-section').appendChild(modal);
-  modal.style.display = 'block';
+  // modal.style.display = 'block';
+  modal.classList.add('modal-active');
 
   close.addEventListener('click', function () {
     document.querySelector('.results-section').removeChild(modal);
@@ -384,5 +385,7 @@ function colorStars(score) {
 const modal = document.querySelector('.modal')
 const openModal = document.querySelector('.result__get-recipe')
 const closeModal = document.querySelector('.modal__close')
-closeModal.addEventListener('click', () => modal.style.display = 'none')
-openModal.addEventListener('click', () => modal.style.display = 'block')
+// closeModal.addEventListener('click', () => modal.style.display = 'none')
+// openModal.addEventListener('click', () => modal.style.display = 'block')
+closeModal.addEventListener('click', () => modal.classList.remove('modal-active'))
+openModal.addEventListener('click', () => modal.classList.add('modal-active'))

@@ -258,11 +258,13 @@ button:hover {
 
 /* Modals */
 .modal {
-  display: none;
+  /* display: none; */
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  transform: translate(-50%, -200%);
+  transition: transform 0.4s ease-in;
 
   width: 95%;
   max-height: 90%;
@@ -275,6 +277,10 @@ button:hover {
   border: 0.2em solid var(--clr-black);
   background-color: var(--clr-white);
   z-index: 2;
+}
+
+.modal-active {
+  transform: translate(-50%, -50%);
 }
 
 .modal::-webkit-scrollbar {
