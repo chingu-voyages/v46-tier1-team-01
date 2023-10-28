@@ -1,10 +1,16 @@
-//User Input
+// Constants and Global Variables
+
+const API_KEY = "c0ceab46e0msh0eadabf65682e61p12dd5ejsnbcab6b2c9a32";
+const RATE_LIMIT = 5; // Requests per second
 let responseCount = 0;
+const fetchQueue = [];
+
+//Event Listener 
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector("form");
   const searchInput = document.querySelector(".search__input");
   const nameElement = document.querySelector(".ingredient-searched");
-
 
   if (form && searchInput && nameElement) {
     form.addEventListener("submit", async (event) => {
@@ -22,25 +28,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-const API_KEY = "c0ceab46e0msh0eadabf65682e61p12dd5ejsnbcab6b2c9a32";
-
-const RATE_LIMIT = 5; // Requests per second
-
-const fetchQueue = []; // Queue to manage fetch requests
-
 async function executeFetchQueue() {
   while (fetchQueue.length > 0) {
     if (responseCount >= 1) {
       break;
     }
     const { recipeName, originalName } = fetchQueue.shift();
-    await fetchThumbnailVideoDescription(recipeName, originalName);
+    await fetchResponses(recipeName, originalName);
     await new Promise((resolve) => setTimeout(resolve, 1000 / RATE_LIMIT));
     responseCount++;
   }
 }
 
 // Fetching AutoComplete the User input
+
 async function Autocomplete(recipeName) {
   const url = `https://tasty.p.rapidapi.com/recipes/auto-complete?prefix=${recipeName}`;
   const options = {
@@ -69,8 +70,9 @@ async function Autocomplete(recipeName) {
   }
 }
 
-// Fetching the Thumbnail from API
-async function fetchThumbnailVideoDescription(recipeName) {
+// Fetching details from API
+
+async function fetchResponses(recipeName) {
   try {
     const response = await fetch(
       `https://tasty.p.rapidapi.com/recipes/list?from=0&size=1&q=${recipeName}`,
@@ -147,42 +149,22 @@ async function fetchThumbnailVideoDescription(recipeName) {
   }
 }
 
-  // // by Andrei : to make it easy to add elements and check styling. Will require commenting (overriding) out actual API functionality.
-  // // by Andrei: set LS for faster display of search result (mock result will aways display 'chicken')  DO NOT DELETE
-  // if (!localStorage['resultForLS']) {
-  //   localStorage.setItem('resultForLS', JSON.stringify(resultForLS))
-  // } else { console.log('exists') }
-
-  // const fromLS = JSON.parse(localStorage['resultForLS'])
-  // console.log(fromLS)
-  // createRecipe(fromLS['recipeName'], fromLS['thumbnail'], fromLS['video_url'], fromLS['description']);
-  // const dataMea = JSON.parse(localStorage.getItem('entire data'))
-  // console.log(dataMea.results[0].yields)
-  // //END
-
-
-
-//Creating the dynamic receipe content box
+// Function to create a dynamic recipe content box
 
 function createRecipe(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
   const box = document.createElement("div");
+  box.classList.add("results__result");
+
   const resultIntro = document.createElement("div");
   resultIntro.classList.add("results__result--intro");
-  box.classList.add("results__result");
+
   const recipeDetails = document.createElement("h3");
+  recipeDetails.textContent = capitalize_firstLetter(recipeName);
+
   const img = document.createElement("img");
-  const button = document.createElement("button");
-
-  button.classList.add("result__get-recipe");
-  button.textContent = "View Recipe";
-
-  recipeDetails.textContent = Capitalize(recipeName);
   img.src = img_url;
 
-  button.addEventListener('click', () => {
-    addDialog(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
-  });
-
+  const button = createViewRecipeButton(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
 
   resultIntro.appendChild(recipeDetails);
   resultIntro.appendChild(button);
@@ -193,16 +175,33 @@ function createRecipe(recipeName, img_url, video_url, description, countryTag, r
   recipeContainer.appendChild(box);
 }
 
-//Function for No results
+// Function to create a "View Recipe" button and attach a click event
 
-function NoResults() {
-  const recipeContainer = document.querySelector(".results__container");
-  const NoResult = document.createElement('h2');
-  NoResult.textContent = 'No result Found';
-  recipeContainer.appendChild(NoResult);
+function createViewRecipeButton(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
+  const button = document.createElement("button");
+  button.classList.add("result__get-recipe");
+  button.textContent = "View Recipe";
+
+  button.addEventListener('click', () => {
+    addDialog(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
+  });
+  return button;
 }
 
+// Function to display "No Results" message
 
+function noResults() {
+  const recipeContainer = document.querySelector(".results__container");
+  const noResult = document.createElement('h2');
+  noResult.textContent = 'No result found';
+  recipeContainer.appendChild(noResult);
+}
+
+// Function to capitalize the first letter of a string
+
+function capitalize_firstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 // Function for view Recipe button
 
@@ -298,7 +297,6 @@ function createSubheading(title, text) {
     content.textContent = text;
     return [heading, content];
   }
-
   return [heading];
 }
 
@@ -317,8 +315,6 @@ function createIngredients(description) {
   return ingredientsContainer; 
 }
 
-
-
 function createInstructions(instructionsTag) {
   const instructions = document.createElement('ul');
   instructions.classList.add('modal__instructions');
@@ -332,10 +328,8 @@ function createInstructions(instructionsTag) {
     listItem.textContent = instruction.display_text;
     instructions.appendChild(listItem);
   });
-
   return instructions;
 }
-
 
 function createVideoLink(video_url) {
   const linkContainer = document.createElement('div');
@@ -376,7 +370,6 @@ function handleKeyPress(event, modal) {
   }
 }
 
-
 function colorStars(rating) {
   for (let i = 1; i <= 5; i++) {
     const star = document.querySelector(`.fa-star:nth-child(${i})`);
@@ -385,7 +378,6 @@ function colorStars(rating) {
     }
   }
 }
-
 
 function Capitalize(text) {
   result = ''
@@ -402,15 +394,3 @@ function clearResults() {
     recipeContainer.removeChild(recipeContainer.firstChild);
   }
 }
-
-
-// //by Andrei : static modal functionality
-
-// //by Andrei : to see the styling changes we make to the modal
-// const modal = document.querySelector('.modal')
-// const openModal = document.querySelector('.result__get-recipe')
-// const closeModal = document.querySelector('.modal__close')
-// // closeModal.addEventListener('click', () => modal.style.display = 'none')
-// // openModal.addEventListener('click', () => modal.style.display = 'block')
-// closeModal.addEventListener('click', () => modal.classList.remove('modal-active'))
-// openModal.addEventListener('click', () => modal.classList.add('modal-active'))
