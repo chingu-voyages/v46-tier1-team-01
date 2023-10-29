@@ -207,7 +207,7 @@ function capitalize_firstLetter(str) {
 
 function addDialog(name, url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
   const modal = createModal();
-   const close = createCloseButton();
+  const close = createCloseButton();
   const mealName = createMealName(name);
   const mealImage = createMealImage(url);
   const list = createTagList(countryTag, difficultyTag);
