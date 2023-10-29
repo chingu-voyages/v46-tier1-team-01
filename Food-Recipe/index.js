@@ -218,7 +218,6 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
   const nutritionDetails = createNutritionDetails(nutrition);
   modal.append(close, mealName, mealImage, list, info, ingredientsText, instructionsText, linkContainer, nutritionDetails);
   document.querySelector('.results-section').appendChild(modal);
-  modal.classList.add('modal-active');
 
   close.addEventListener('click', () => closeModal(modal));
   document.body.addEventListener('keydown', (e) => handleKeyPress(e, modal));
@@ -229,6 +228,7 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
 function createModal() {
   const modal = document.createElement('div');
   modal.classList.add('modal');
+  modal.classList.add('modal-active');
   return modal;
 }
 
