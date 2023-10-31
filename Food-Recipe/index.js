@@ -108,7 +108,7 @@ async function fetchResponses(recipeName) {
 
       const rating = Math.ceil(data.results[0].user_ratings.score * 5);
       const yields = data.results[0].yields;
-      const cookTime = data.results[0]?.total_time_tier?.display_tier;
+      const cookTime = data.results[0]?.total_time_tier?.display_tier ?? "null";
       const instructionsTag = data.results[0]?.instructions;
 
       const nutrition = () => {
