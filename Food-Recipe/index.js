@@ -49,8 +49,8 @@ async function executeFetchQueue() {
     resultsSection.appendChild(loadingModal);
 
 
-    const { recipeName, originalName } = fetchQueue.shift();
-    await fetchResponses(recipeName, originalName);
+    const { recipeName: displayName, originalName } = fetchQueue.shift();
+    await fetchResponses(displayName, originalName);
     await new Promise((resolve) => setTimeout(resolve, 1000 / RATE_LIMIT));
     responseCount++;
 
