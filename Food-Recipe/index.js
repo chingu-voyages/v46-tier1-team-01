@@ -117,7 +117,7 @@ async function fetchResponses(recipeName) {
         if (obj) {
           for (const key in obj) {
             if (obj.hasOwnProperty(key) && key !== "updated_at") {
-              result += `${key}: ${obj[key]}, `;
+              result += `${capitalize_firstLetter(key)}: ${obj[key]}, `;
             }
           }
           result = result.slice(0, -2).split(',').map(item => `<li>${item}</li>`).join("");
@@ -139,8 +139,9 @@ async function fetchResponses(recipeName) {
         const result = filteredDifficultyTags.map((entry) => entry.display_name);
         return result;
       };
+      const displayName = data.results[0]?.name;
 
-      createRecipe(recipeName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
+      createRecipe(displayName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
     } else {
       console.error("No results found in thumbnail API for:", recipeName);
     }
@@ -151,7 +152,7 @@ async function fetchResponses(recipeName) {
 
 // Function to create a dynamic recipe content box
 
-function createRecipe(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
+function createRecipe(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
   const box = document.createElement("div");
   box.classList.add("results__result");
 
@@ -159,12 +160,12 @@ function createRecipe(recipeName, img_url, video_url, description, countryTag, r
   resultIntro.classList.add("results__result--intro");
 
   const recipeDetails = document.createElement("h3");
-  recipeDetails.textContent = capitalize_firstLetter(recipeName);
+  recipeDetails.textContent = capitalize_firstLetter(displayName);
 
   const img = document.createElement("img");
   img.src = img_url;
 
-  const button = createViewRecipeButton(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
+  const button = createViewRecipeButton(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
 
   resultIntro.appendChild(recipeDetails);
   resultIntro.appendChild(button);
@@ -177,13 +178,13 @@ function createRecipe(recipeName, img_url, video_url, description, countryTag, r
 
 // Function to create a "View Recipe" button and attach a click event
 
-function createViewRecipeButton(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
+function createViewRecipeButton(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
   const button = document.createElement("button");
   button.classList.add("result__get-recipe");
   button.textContent = "View Recipe";
 
   button.addEventListener('click', () => {
-    addDialog(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
+    addDialog(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
   });
   return button;
 }
@@ -394,3 +395,7 @@ function clearResults() {
     recipeContainer.removeChild(recipeContainer.firstChild);
   }
 }
+
+
+
+//comment on first commit
