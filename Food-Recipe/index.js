@@ -1,6 +1,6 @@
 // Constants and Global Variables
 
-const API_KEY = "c0ceab46e0msh0eadabf65682e61p12dd5ejsnbcab6b2c9a32";
+const API_KEY = "0b5f2a4987msh1c05fadf2f97fc1p130d44jsn94374ebd2b70";
 const RATE_LIMIT = 5; // Requests per second
 let responseCount = 0;
 const fetchQueue = [];
@@ -395,3 +395,7 @@ function clearResults() {
     recipeContainer.removeChild(recipeContainer.firstChild);
   }
 }
+
+
+
+//comment on first commit
