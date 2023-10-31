@@ -139,8 +139,9 @@ async function fetchResponses(recipeName) {
         const result = filteredDifficultyTags.map((entry) => entry.display_name);
         return result;
       };
+      const displayName = data.results[0]?.name;
 
-      createRecipe(recipeName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
+      createRecipe(displayName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
     } else {
       console.error("No results found in thumbnail API for:", recipeName);
     }
@@ -151,7 +152,7 @@ async function fetchResponses(recipeName) {
 
 // Function to create a dynamic recipe content box
 
-function createRecipe(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
+function createRecipe(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
   const box = document.createElement("div");
   box.classList.add("results__result");
 
@@ -159,12 +160,12 @@ function createRecipe(recipeName, img_url, video_url, description, countryTag, r
   resultIntro.classList.add("results__result--intro");
 
   const recipeDetails = document.createElement("h3");
-  recipeDetails.textContent = capitalize_firstLetter(recipeName);
+  recipeDetails.textContent = capitalize_firstLetter(displayName);
 
   const img = document.createElement("img");
   img.src = img_url;
 
-  const button = createViewRecipeButton(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
+  const button = createViewRecipeButton(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
 
   resultIntro.appendChild(recipeDetails);
   resultIntro.appendChild(button);
@@ -177,13 +178,13 @@ function createRecipe(recipeName, img_url, video_url, description, countryTag, r
 
 // Function to create a "View Recipe" button and attach a click event
 
-function createViewRecipeButton(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
+function createViewRecipeButton(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
   const button = document.createElement("button");
   button.classList.add("result__get-recipe");
   button.textContent = "View Recipe";
 
   button.addEventListener('click', () => {
-    addDialog(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
+    addDialog(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
   });
   return button;
 }
@@ -280,10 +281,10 @@ function createInfoSection(yields, cookTime) {
 
   const servings = createSubheading(yields);
   const timeInfo = createSubheading('Cooking Time:', cookTime);
- 
-  info.appendChild(servings[0]); 
-  info.appendChild(timeInfo[0]); 
-  info.appendChild(timeInfo[1]); 
+
+  info.appendChild(servings[0]);
+  info.appendChild(timeInfo[0]);
+  info.appendChild(timeInfo[1]);
 
   return info;
 }
@@ -301,7 +302,7 @@ function createSubheading(title, text) {
 }
 
 function createIngredients(description) {
-  const ingredientsContainer = document.createElement('div'); 
+  const ingredientsContainer = document.createElement('div');
 
   const ingredientsTitle = document.createElement('h4');
   ingredientsTitle.textContent = 'Ingredients';
@@ -312,7 +313,7 @@ function createIngredients(description) {
   ingredientsContainer.appendChild(ingredientsTitle);
   ingredientsContainer.appendChild(ingredientsText);
 
-  return ingredientsContainer; 
+  return ingredientsContainer;
 }
 
 function createInstructions(instructionsTag) {
