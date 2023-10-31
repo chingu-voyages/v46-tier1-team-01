@@ -1,6 +1,6 @@
 // Constants and Global Variables
 
-const API_KEY = "c0ceab46e0msh0eadabf65682e61p12dd5ejsnbcab6b2c9a32";
+const API_KEY = "0b5f2a4987msh1c05fadf2f97fc1p130d44jsn94374ebd2b70";
 const RATE_LIMIT = 5; // Requests per second
 let responseCount = 0;
 const fetchQueue = [];
@@ -280,10 +280,10 @@ function createInfoSection(yields, cookTime) {
 
   const servings = createSubheading(yields);
   const timeInfo = createSubheading('Cooking Time:', cookTime);
- 
-  info.appendChild(servings[0]); 
-  info.appendChild(timeInfo[0]); 
-  info.appendChild(timeInfo[1]); 
+
+  info.appendChild(servings[0]);
+  info.appendChild(timeInfo[0]);
+  info.appendChild(timeInfo[1]);
 
   return info;
 }
@@ -301,7 +301,7 @@ function createSubheading(title, text) {
 }
 
 function createIngredients(description) {
-  const ingredientsContainer = document.createElement('div'); 
+  const ingredientsContainer = document.createElement('div');
 
   const ingredientsTitle = document.createElement('h4');
   ingredientsTitle.textContent = 'Ingredients';
@@ -312,7 +312,7 @@ function createIngredients(description) {
   ingredientsContainer.appendChild(ingredientsTitle);
   ingredientsContainer.appendChild(ingredientsText);
 
-  return ingredientsContainer; 
+  return ingredientsContainer;
 }
 
 function createInstructions(instructionsTag) {
