@@ -4,6 +4,7 @@ const API_KEY = "0b5f2a4987msh1c05fadf2f97fc1p130d44jsn94374ebd2b70";
 const RATE_LIMIT = 5; // Requests per second
 let responseCount = 0;
 const fetchQueue = [];
+let loadingModal = null;
 
 //Event Listener 
 
@@ -30,13 +31,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function executeFetchQueue() {
   while (fetchQueue.length > 0) {
-    if (responseCount >= 1) {
+    if (responseCount >= 3) {
       break;
     }
+
+     // Create the loading modal if it doesn't exist
+    if (!loadingModal) {
+      loadingModal = document.createElement('div');
+      loadingModal.classList.add('results__result');
+      const loading = document.createElement('p');
+      loading.textContent = 'Loading...';
+      loadingModal.appendChild(loading);
+    }
+
+    // Append the loading modal to the results section
+    const resultsSection = document.querySelector('.results-section');
+    resultsSection.appendChild(loadingModal);
+
+
     const { recipeName, originalName } = fetchQueue.shift();
     await fetchResponses(recipeName, originalName);
     await new Promise((resolve) => setTimeout(resolve, 1000 / RATE_LIMIT));
     responseCount++;
+
   }
 }
 
@@ -117,7 +134,7 @@ async function fetchResponses(recipeName) {
         if (obj) {
           for (const key in obj) {
             if (obj.hasOwnProperty(key) && key !== "updated_at") {
-              result += `${capitalize_firstLetter(key)}: ${obj[key]}, `;
+              result += `${key}: ${obj[key]}, `;
             }
           }
           result = result.slice(0, -2).split(',').map(item => `<li>${item}</li>`).join("");
@@ -139,9 +156,8 @@ async function fetchResponses(recipeName) {
         const result = filteredDifficultyTags.map((entry) => entry.display_name);
         return result;
       };
-      const displayName = data.results[0]?.name;
 
-      createRecipe(displayName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
+      createRecipe(recipeName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
     } else {
       console.error("No results found in thumbnail API for:", recipeName);
     }
@@ -152,7 +168,13 @@ async function fetchResponses(recipeName) {
 
 // Function to create a dynamic recipe content box
 
-function createRecipe(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
+function createRecipe(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
+  
+   if (loadingModal) {
+    loadingModal.remove();
+    loadingModal = null; // Reset the loading modal variable
+  }
+
   const box = document.createElement("div");
   box.classList.add("results__result");
 
@@ -160,12 +182,12 @@ function createRecipe(displayName, img_url, video_url, description, countryTag, 
   resultIntro.classList.add("results__result--intro");
 
   const recipeDetails = document.createElement("h3");
-  recipeDetails.textContent = capitalize_firstLetter(displayName);
+  recipeDetails.textContent = capitalize_firstLetter(recipeName);
 
   const img = document.createElement("img");
   img.src = img_url;
 
-  const button = createViewRecipeButton(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
+  const button = createViewRecipeButton(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
 
   resultIntro.appendChild(recipeDetails);
   resultIntro.appendChild(button);
@@ -178,13 +200,13 @@ function createRecipe(displayName, img_url, video_url, description, countryTag, 
 
 // Function to create a "View Recipe" button and attach a click event
 
-function createViewRecipeButton(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
+function createViewRecipeButton(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
   const button = document.createElement("button");
   button.classList.add("result__get-recipe");
   button.textContent = "View Recipe";
 
   button.addEventListener('click', () => {
-    addDialog(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
+    addDialog(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
   });
   return button;
 }
@@ -218,7 +240,7 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
   const linkContainer = createVideoLink(video_url);
   const nutritionDetails = createNutritionDetails(nutrition);
   modal.append(close, mealName, mealImage, list, info, ingredientsText, instructionsText, linkContainer, nutritionDetails);
-  document.querySelector('.results-section').appendChild(modal);
+  resultsSection.appendChild(modal);
 
   close.addEventListener('click', () => closeModal(modal));
   document.body.addEventListener('keydown', (e) => handleKeyPress(e, modal));
@@ -395,7 +417,3 @@ function clearResults() {
     recipeContainer.removeChild(recipeContainer.firstChild);
   }
 }
-
-
-
-//comment on first commit
