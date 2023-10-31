@@ -1,3 +1,24 @@
+
+//closes the modal on click outside the modal
+window.addEventListener('click', (e) => {
+  console.log('no modal')
+  if (document.querySelector('.modal')) {
+    if (!e.target.matches('.modal')) {
+      console.log('yes modal')
+      if (e.target.matches('.result__get-recipe')) return
+      else {
+        const doesNoCloseOnClick = e.target.closest('h3, img, ul, div, h4, p, a, summary');
+        if (!doesNoCloseOnClick) {
+          document.querySelector('.results-section').removeChild(document.querySelector('.modal'));
+        }
+      }
+
+    }
+  }
+})
+
+
+
 // Constants and Global Variables
 
 const API_KEY = "0b5f2a4987msh1c05fadf2f97fc1p130d44jsn94374ebd2b70";
@@ -97,6 +118,8 @@ async function fetchResponses(recipeName) {
       const video_url = data.results[0].original_video_url;
       const description = data.results[0].description;
 
+      const displayName = data.results[0]?.name;
+
       const countryTag = () => {
         let result = "";
         data.results[0]?.tags.filter((entry) => {
@@ -109,21 +132,8 @@ async function fetchResponses(recipeName) {
       const rating = Math.ceil(data.results[0].user_ratings.score * 5);
       const yields = data.results[0].yields;
       const cookTime = data.results[0]?.total_time_tier?.display_tier ?? "null";
-      const instructionsTag = data.results[0]?.instructions;
 
-      const nutrition = () => {
-        const obj = data.results[0]?.nutrition;
-        let result = "";
-        if (obj) {
-          for (const key in obj) {
-            if (obj.hasOwnProperty(key) && key !== "updated_at") {
-              result += `${capitalize_firstLetter(key)}: ${obj[key]}, `;
-            }
-          }
-          result = result.slice(0, -2).split(',').map(item => `<li>${item}</li>`).join("");
-        }
-        return result;
-      };
+      const instructionsTag = data.results[0]?.instructions;
 
       const difficultyTag = () => {
         const master = data.results[0]?.tags;
@@ -139,7 +149,23 @@ async function fetchResponses(recipeName) {
         const result = filteredDifficultyTags.map((entry) => entry.display_name);
         return result;
       };
-      const displayName = data.results[0]?.name;
+
+      const nutrition = () => {
+        const obj = data.results[0]?.nutrition;
+        let result = "";
+        if (obj) {
+          for (const key in obj) {
+            if (obj.hasOwnProperty(key) && key !== "updated_at") {
+              result += `${capitalize_firstLetter(key)}: ${obj[key]}, `;
+            }
+          }
+          result = result.slice(0, -2).split(',').map(item => `<li>${item}</li>`).join("");
+        }
+        return result;
+      };
+
+
+
 
       createRecipe(displayName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
     } else {
@@ -316,6 +342,14 @@ function createIngredients(description) {
   return ingredientsContainer;
 }
 
+
+
+
+
+
+
+
+
 function createInstructions(instructionsTag) {
   const instructions = document.createElement('ul');
   instructions.classList.add('modal__instructions');
@@ -331,6 +365,7 @@ function createInstructions(instructionsTag) {
   });
   return instructions;
 }
+
 
 function createVideoLink(video_url) {
   const linkContainer = document.createElement('div');
