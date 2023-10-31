@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function executeFetchQueue() {
   while (fetchQueue.length > 0) {
-    if (responseCount >= 3) {
+    if (responseCount >= 1) {
       break;
     }
 
