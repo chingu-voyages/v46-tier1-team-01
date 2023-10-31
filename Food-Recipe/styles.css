@@ -7,6 +7,9 @@
   --clr-black: black;
   --clr-white: white;
   --clr-accent: #8600d2;
+  --clr-dark-mode-body: #1e1e1e;
+  --clr-dark-mode-result: #3a3a3a;
+  --clr-dark-mode-modal-border: #999999;
   /* Font families */
   --ff-primary: "Inter";
   /* FOnt sizes */
@@ -262,9 +265,9 @@ button:hover {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  transform: translate(-50%, -200%);
-  transition: transform 0.4s ease-in;
+  /* transform: translate(-50%, -50%); */
+  /* transform: translate(-50%, -200%);
+  transition: transform 0.4s ease-in; */
 
   width: 95%;
   max-height: 90%;
@@ -400,6 +403,21 @@ footer {
   text-align: center;
   background-color: var(--clr-accent);
   color: var(--clr-white);
+}
+
+/* Dark Mode */
+.dark-mode {
+  color: var(--clr-white);
+}
+
+body.dark-mode {
+  background-color: var(--clr-dark-mode-body);
+}
+
+.results__result.dark-mode,
+.modal.dark-mode {
+  background-color: var(--clr-dark-mode-result);
+  border-color: var(--clr-dark-mode-modal-border);
 }
 
 /* Screen sizes larger than mobile */
