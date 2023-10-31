@@ -397,5 +397,15 @@ function clearResults() {
 }
 
 
+// Dark/light mode toggle
+const darkModeBtn = document.querySelector('.dark-mode-btn');
+darkModeBtn.addEventListener('click', () => toggleDarkMode())
+
+function toggleDarkMode() {
+  document.body.classList.toggle('dark-mode');
+  document.querySelector('.results__result').toggle('dark-mode');
+  document.querySelector('.modal').toggle('dark-mode');
+  document.querySelector('.modal__close').toggle('dark-mode');
+}
 
 //comment on first commit
