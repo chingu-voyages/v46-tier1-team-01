@@ -5,7 +5,9 @@ const RATE_LIMIT = 5; // Requests per second
 let responseCount = 0;
 const fetchQueue = [];
 
+
 // Dark/light mode toggle
+
 const darkModeBtn = document.querySelector('.dark-mode-btn');
 darkModeBtn.addEventListener('click', () => toggleDarkMode())
 
@@ -16,7 +18,9 @@ function toggleDarkMode() {
   document.querySelector('.modal__close').classList.toggle('dark-mode');
 }
 
+
 //Searh Input Event Listener 
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector("form");
   const searchInput = document.querySelector(".search__input");
