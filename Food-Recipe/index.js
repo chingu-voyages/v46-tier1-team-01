@@ -403,9 +403,9 @@ darkModeBtn.addEventListener('click', () => toggleDarkMode())
 
 function toggleDarkMode() {
   document.body.classList.toggle('dark-mode');
-  document.querySelector('.results__result').toggle('dark-mode');
-  document.querySelector('.modal').toggle('dark-mode');
-  document.querySelector('.modal__close').toggle('dark-mode');
+  document.querySelector('.results__result').classList.toggle('dark-mode');
+  document.querySelector('.modal').classList.toggle('dark-mode');
+  document.querySelector('.modal__close').classList.toggle('dark-mode');
 }
 
 //comment on first commit
