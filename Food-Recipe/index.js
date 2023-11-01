@@ -22,7 +22,7 @@ function toggleDarkMode() {
   if (body.classList.contains('dark-mode')) {
     localStorage.setItem('dark-mode', 'enabled');
   } else {
-      localStorage.setItem('dark-mode', 'disabled');
+    localStorage.setItem('dark-mode', 'disabled');
   }
 
   if (result) {
