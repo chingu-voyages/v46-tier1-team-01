@@ -306,26 +306,19 @@ function createInfoSection(yields, cookTime) {
   info.classList.add('modal__info');
 
   const servings = createSubheading(yields);
-  const timeInfo = createSubheading('Cooking Time:', cookTime);
+  const timeInfo = createSubheading(`Cooking Time: ${cookTime}`);
 
-  info.appendChild(servings[0]);
-  info.appendChild(timeInfo[0]);
-  info.appendChild(timeInfo[1]);
-
+  info.appendChild(servings);
+  info.appendChild(timeInfo);
   return info;
 }
 
-function createSubheading(title, text) {
+function createSubheading(title) {
   const heading = document.createElement('h4');
   heading.textContent = title;
-
-  if (text) {
-    const content = document.createElement('p');
-    content.textContent = text;
-    return [heading, content];
-  }
-  return [heading];
+  return heading;
 }
+
 
 function createIngredients(description) {
   const ingredientsContainer = document.createElement('div');
@@ -341,14 +334,6 @@ function createIngredients(description) {
 
   return ingredientsContainer;
 }
-
-
-
-
-
-
-
-
 
 function createInstructions(instructionsTag) {
   const instructionsDiv = document.createElement('div');
