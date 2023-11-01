@@ -9,7 +9,7 @@ const fetchQueue = [];
 // Dark/light mode toggle
 
 const darkModeToggle = document.querySelector('.dark-mode__toggle');
-darkModeToggle.addEventListener('click', () => toggleDarkMode());
+darkModeToggle.addEventListener('change', () => toggleDarkMode());
 
 const body = document.body;
 const isDarkMode = localStorage.getItem('dark-mode');
