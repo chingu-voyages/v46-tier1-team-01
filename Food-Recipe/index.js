@@ -8,17 +8,22 @@ const fetchQueue = [];
 
 // Dark/light mode toggle
 
-let darkModeOn = false;
 const darkModeBtn = document.querySelector('.dark-mode-btn');
 darkModeBtn.addEventListener('click', () => toggleDarkMode());
 
+const body = document.body;
+const isDarkMode = localStorage.getItem('dark-mode');
+if (isDarkMode === 'enabled') {
+  body.classList.add('dark-mode');
+}
+
 function toggleDarkMode() {
-  const body = document.body;
   const result = document.querySelector('.results__result');
   const modal = document.querySelector('.modal');
   const modalClose = document.querySelector('.modal__close');
 
   body.classList.toggle('dark-mode');
+
   if (body.classList.contains('dark-mode')) {
     localStorage.setItem('dark-mode', 'enabled');
   } else {
@@ -34,8 +39,6 @@ function toggleDarkMode() {
   if (modalClose) {
     modalClose.classList.toggle('dark-mode');
   }
-
-  darkModeOn ? false : true;
 }
 
 
@@ -189,6 +192,9 @@ async function fetchResponses(recipeName) {
 function createRecipe(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
   const box = document.createElement("div");
   box.classList.add("results__result");
+  if (isDarkMode === 'enabled') {
+    box.classList.add('dark-mode');
+  }
 
   const resultIntro = document.createElement("div");
   resultIntro.classList.add("results__result--intro");
@@ -264,6 +270,9 @@ function createModal() {
   const modal = document.createElement('div');
   modal.classList.add('modal');
   modal.classList.add('modal-active');
+  if (isDarkMode === 'enabled') {
+    modal.classList.add('dark-mode');
+  }
   return modal;
 }
 
@@ -271,6 +280,9 @@ function createCloseButton() {
   const close = document.createElement('button');
   close.classList.add('modal__close');
   close.innerHTML = '&#10006;';
+  if (isDarkMode === 'enabled') {
+    close.classList.add('dark-mode');
+  }
   return close;
 }
 
