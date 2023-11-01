@@ -411,6 +411,12 @@ footer a:focus {
 }
 
 /* Dark Mode */
+.dark-mode-btn {
+  position: fixed;
+  right: 0.9em;
+  top: 0.9em;
+}
+
 .dark-mode {
   color: var(--clr-white);
 }
