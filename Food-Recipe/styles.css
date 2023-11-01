@@ -411,7 +411,7 @@ footer a:focus {
 }
 
 /* Dark Mode */
-.dark-mode-btn {
+.dark-mode__toggle {
   position: fixed;
   right: 0.9em;
   top: 0.9em;
