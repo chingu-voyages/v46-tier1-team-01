@@ -8,14 +8,28 @@ const fetchQueue = [];
 
 // Dark/light mode toggle
 
+let darkModeOn = false;
 const darkModeBtn = document.querySelector('.dark-mode-btn');
-darkModeBtn.addEventListener('click', () => toggleDarkMode())
+darkModeBtn.addEventListener('click', () => toggleDarkMode());
 
 function toggleDarkMode() {
+  const result = document.querySelector('.results__result');
+  const modal =   document.querySelector('.modal');
+  const modalClose = document.querySelector('.modal__close');
+
   document.body.classList.toggle('dark-mode');
-  document.querySelector('.results__result').classList.toggle('dark-mode');
-  document.querySelector('.modal').classList.toggle('dark-mode');
-  document.querySelector('.modal__close').classList.toggle('dark-mode');
+
+  if (result) {
+    result.classList.toggle('dark-mode');
+  }
+  if (modal) {
+    modal.classList.toggle('dark-mode');
+  }
+  if (modalClose) {
+    modalClose.classList.toggle('dark-mode');
+  }
+
+  darkModeOn ? false : true;
 }
 
 
