@@ -405,6 +405,11 @@ footer {
   color: var(--clr-white);
 }
 
+footer a:focus {
+  outline: 0.1em solid var(--clr-white);
+  outline-offset: 0.1em;
+}
+
 /* Dark Mode */
 .dark-mode {
   color: var(--clr-white);
