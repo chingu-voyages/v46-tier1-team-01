@@ -351,19 +351,21 @@ function createIngredients(description) {
 
 
 function createInstructions(instructionsTag) {
-  const instructions = document.createElement('ul');
-  instructions.classList.add('modal__instructions');
+  const instructionsDiv = document.createElement('div');
+  instructionsDiv.classList.add('modal__instructions');
 
   const subheading = document.createElement('h4');
   subheading.textContent = 'Instructions:';
-  instructions.appendChild(subheading);
+  const instructionsList = document.createElement('ul');
+  instructionsDiv.appendChild(subheading);
+  instructionsDiv.appendChild(instructionsList);
 
   instructionsTag.forEach((instruction) => {
     const listItem = document.createElement('li');
     listItem.textContent = instruction.display_text;
-    instructions.appendChild(listItem);
+    instructionsList.appendChild(listItem);
   });
-  return instructions;
+  return instructionsDiv;
 }
 
 
