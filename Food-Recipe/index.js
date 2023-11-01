@@ -13,11 +13,17 @@ const darkModeBtn = document.querySelector('.dark-mode-btn');
 darkModeBtn.addEventListener('click', () => toggleDarkMode());
 
 function toggleDarkMode() {
+  const body = document.body;
   const result = document.querySelector('.results__result');
-  const modal =   document.querySelector('.modal');
+  const modal = document.querySelector('.modal');
   const modalClose = document.querySelector('.modal__close');
 
-  document.body.classList.toggle('dark-mode');
+  body.classList.toggle('dark-mode');
+  if (body.classList.contains('dark-mode')) {
+    localStorage.setItem('dark-mode', 'enabled');
+  } else {
+      localStorage.setItem('dark-mode', 'disabled');
+  }
 
   if (result) {
     result.classList.toggle('dark-mode');
