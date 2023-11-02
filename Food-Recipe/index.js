@@ -24,7 +24,45 @@ const RATE_LIMIT = 5; // Requests per second
 let responseCount = 0;
 const fetchQueue = [];
 
-//Event Listener 
+
+// Dark/light mode toggle
+
+const darkModeToggle = document.querySelector('.dark-mode__toggle');
+darkModeToggle.addEventListener('change', () => toggleDarkMode());
+
+const body = document.body;
+const isDarkMode = localStorage.getItem('dark-mode');
+if (isDarkMode === 'enabled') {
+  body.classList.add('dark-mode');
+  darkModeToggle.checked = true;
+}
+
+function toggleDarkMode() {
+  const result = document.querySelector('.results__result');
+  const modal = document.querySelector('.modal');
+  const modalClose = document.querySelector('.modal__close');
+
+  body.classList.toggle('dark-mode');
+
+  if (body.classList.contains('dark-mode')) {
+    localStorage.setItem('dark-mode', 'enabled');
+  } else {
+    localStorage.setItem('dark-mode', 'disabled');
+  }
+
+  if (result) {
+    result.classList.toggle('dark-mode');
+  }
+  if (modal) {
+    modal.classList.toggle('dark-mode');
+  }
+  if (modalClose) {
+    modalClose.classList.toggle('dark-mode');
+  }
+}
+
+
+//Searh Input Event Listener 
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector("form");
@@ -183,6 +221,9 @@ async function fetchResponses(recipeName) {
 function createRecipe(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, ingredientsTag, instructionsTag, nutrition, difficultyTag) {
   const box = document.createElement("div");
   box.classList.add("results__result");
+  if (body.classList.contains('dark-mode')) {
+    box.classList.add('dark-mode');
+  }
 
   const resultIntro = document.createElement("div");
   resultIntro.classList.add("results__result--intro");
@@ -258,6 +299,9 @@ function createModal() {
   const modal = document.createElement('div');
   modal.classList.add('modal');
   modal.classList.add('modal-active');
+  if (body.classList.contains('dark-mode')) {
+    modal.classList.add('dark-mode');
+  }
   return modal;
 }
 
@@ -265,6 +309,9 @@ function createCloseButton() {
   const close = document.createElement('button');
   close.classList.add('modal__close');
   close.innerHTML = '&#10006;';
+  if (body.classList.contains('dark-mode')) {
+    close.classList.add('dark-mode');
+  }
   return close;
 }
 
@@ -420,7 +467,5 @@ function clearResults() {
     recipeContainer.removeChild(recipeContainer.firstChild);
   }
 }
-
-
 
 //comment on first commit
