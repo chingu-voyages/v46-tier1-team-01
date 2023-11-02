@@ -15,6 +15,7 @@ const body = document.body;
 const isDarkMode = localStorage.getItem('dark-mode');
 if (isDarkMode === 'enabled') {
   body.classList.add('dark-mode');
+  darkModeToggle.checked = true;
 }
 
 function toggleDarkMode() {
@@ -273,6 +274,7 @@ function createModal() {
   if (isDarkMode === 'enabled') {
     modal.classList.add('dark-mode');
   }
+  console.log(isDarkMode)
   return modal;
 }
 
