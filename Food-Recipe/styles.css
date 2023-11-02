@@ -407,9 +407,6 @@ footer {
   .search-section form {
     grid-template-columns: 2fr 1fr;
   }
-  .modal::-webkit-scrollbar-thumb {
-    background: #b1b1b1;
-  }
 }
 
 /* Tablet screen size */
@@ -439,5 +436,8 @@ footer {
   }
   .results__container {
     grid-template-columns: auto auto auto;
+  }
+  .modal::-webkit-scrollbar-thumb {
+    background: #b1b1b1;
   }
 }
