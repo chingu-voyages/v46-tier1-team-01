@@ -1,10 +1,8 @@
 
 //closes the modal on click outside the modal
 window.addEventListener('click', (e) => {
-  console.log('no modal')
   if (document.querySelector('.modal')) {
     if (!e.target.matches('.modal')) {
-      console.log('yes modal')
       if (e.target.matches('.result__get-recipe')) return
       else {
         const doesNoCloseOnClick = e.target.closest('h3, img, ul, div, h4, p, a, summary');
@@ -21,7 +19,7 @@ window.addEventListener('click', (e) => {
 
 // Constants and Global Variables
 
-const API_KEY = "0b5f2a4987msh1c05fadf2f97fc1p130d44jsn94374ebd2b70";
+const API_KEY = "a4656306damsh4302c6129a88607p19321ejsnbb0d215f3796";
 const RATE_LIMIT = 5; // Requests per second
 let responseCount = 0;
 const fetchQueue = [];
@@ -126,14 +124,17 @@ async function fetchResponses(recipeName) {
           if (entry.root_tag_type === "cuisine" && entry.display_name !== "Cuisine")
             result += `${entry.display_name} `;
         });
-        return result;
+        return result.length === 0 ? "N/A" : result;
       };
 
       const rating = Math.ceil(data.results[0].user_ratings.score * 5);
       const yields = data.results[0].yields;
-      const cookTime = data.results[0]?.total_time_tier?.display_tier ?? "null";
+      const cookTime = data.results[0].total_time_tier?.display_tier ?? "N/A";
 
+      const ingredientsTag = data.results[0]?.sections[0].components;
+      console.log(ingredientsTag)
       const instructionsTag = data.results[0]?.instructions;
+
 
       const difficultyTag = () => {
         const master = data.results[0]?.tags;
@@ -147,7 +148,7 @@ async function fetchResponses(recipeName) {
           );
         });
         const result = filteredDifficultyTags.map((entry) => entry.display_name);
-        return result;
+        return result.length === 0 ? 'N/A' : result
       };
 
       const nutrition = () => {
@@ -159,15 +160,16 @@ async function fetchResponses(recipeName) {
               result += `${capitalize_firstLetter(key)}: ${obj[key]}, `;
             }
           }
-          result = result.slice(0, -2).split(',').map(item => `<li>${item}</li>`).join("");
+          result.length > 0 ? result = result.slice(0, -2).split(',').map(item => `<li>${item}</li>`).join("") : result = "No nutrition data available";
         }
+
         return result;
       };
 
 
 
 
-      createRecipe(displayName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
+      createRecipe(displayName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, ingredientsTag, instructionsTag, nutrition, difficultyTag);
     } else {
       console.error("No results found in thumbnail API for:", recipeName);
     }
@@ -178,7 +180,7 @@ async function fetchResponses(recipeName) {
 
 // Function to create a dynamic recipe content box
 
-function createRecipe(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
+function createRecipe(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, ingredientsTag, instructionsTag, nutrition, difficultyTag) {
   const box = document.createElement("div");
   box.classList.add("results__result");
 
@@ -191,7 +193,7 @@ function createRecipe(displayName, img_url, video_url, description, countryTag, 
   const img = document.createElement("img");
   img.src = img_url;
 
-  const button = createViewRecipeButton(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
+  const button = createViewRecipeButton(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, ingredientsTag, instructionsTag, nutrition, difficultyTag);
 
   resultIntro.appendChild(recipeDetails);
   resultIntro.appendChild(button);
@@ -204,13 +206,13 @@ function createRecipe(displayName, img_url, video_url, description, countryTag, 
 
 // Function to create a "View Recipe" button and attach a click event
 
-function createViewRecipeButton(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
+function createViewRecipeButton(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, ingredientsTag, instructionsTag, nutrition, difficultyTag) {
   const button = document.createElement("button");
   button.classList.add("result__get-recipe");
   button.textContent = "View Recipe";
 
   button.addEventListener('click', () => {
-    addDialog(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag);
+    addDialog(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, ingredientsTag, instructionsTag, nutrition, difficultyTag);
   });
   return button;
 }
@@ -232,14 +234,14 @@ function capitalize_firstLetter(str) {
 
 // Function for view Recipe button
 
-function addDialog(name, url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
+function addDialog(name, url, video_url, description, countryTag, rating, cookTime, yields, ingredientsTag, instructionsTag, nutrition, difficultyTag) {
   const modal = createModal();
   const close = createCloseButton();
   const mealName = createMealName(name);
   const mealImage = createMealImage(url);
   const list = createTagList(countryTag, difficultyTag);
   const info = createInfoSection(yields, cookTime);
-  const ingredientsText = createIngredients(description);
+  const ingredientsText = createIngredients(ingredientsTag);
   const instructionsText = createInstructions(instructionsTag);
   const linkContainer = createVideoLink(video_url);
   const nutritionDetails = createNutritionDetails(nutrition);
@@ -320,18 +322,19 @@ function createSubheading(title) {
 }
 
 
-function createIngredients(description) {
+function createIngredients(ingredientsTag) {
   const ingredientsContainer = document.createElement('div');
-
   const ingredientsTitle = document.createElement('h4');
   ingredientsTitle.textContent = 'Ingredients';
-
-  const ingredientsText = document.createElement('p');
-  ingredientsText.classList.add('modal__ingredients');
-  ingredientsText.textContent = description;
+  const ingredientsList = document.createElement('ul');
+  ingredientsTag.forEach((ingredient) => {
+    const listItem = document.createElement('li');
+    listItem.textContent = ingredient.raw_text;
+    ingredientsList.appendChild(listItem);
+  });
+  // ingredientsText.classList.add('modal__ingredients');
   ingredientsContainer.appendChild(ingredientsTitle);
-  ingredientsContainer.appendChild(ingredientsText);
-
+  ingredientsContainer.appendChild(ingredientsList);
   return ingredientsContainer;
 }
 
