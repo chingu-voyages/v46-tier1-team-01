@@ -193,7 +193,7 @@ async function fetchResponses(recipeName) {
 function createRecipe(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
   const box = document.createElement("div");
   box.classList.add("results__result");
-  if (isDarkMode === 'enabled') {
+  if (body.classList.contains('dark-mode')) {
     box.classList.add('dark-mode');
   }
 
@@ -271,7 +271,7 @@ function createModal() {
   const modal = document.createElement('div');
   modal.classList.add('modal');
   modal.classList.add('modal-active');
-  if (isDarkMode === 'enabled') {
+  if (body.classList.contains('dark-mode')) {
     modal.classList.add('dark-mode');
   }
   return modal;
@@ -281,7 +281,7 @@ function createCloseButton() {
   const close = document.createElement('button');
   close.classList.add('modal__close');
   close.innerHTML = '&#10006;';
-  if (isDarkMode === 'enabled') {
+  if (body.classList.contains('dark-mode')) {
     close.classList.add('dark-mode');
   }
   return close;
