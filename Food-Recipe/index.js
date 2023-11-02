@@ -274,7 +274,6 @@ function createModal() {
   if (isDarkMode === 'enabled') {
     modal.classList.add('dark-mode');
   }
-  console.log(isDarkMode)
   return modal;
 }
 
