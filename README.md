@@ -33,3 +33,11 @@ From the repository:
 
 - [Tasty API](https://rapidapi.com/apidojo/api/tasty)
 - Google Fonts: [Inter](https://fonts.google.com/specimen/Inter)
+
+## Contributors
+
+Thank you for your hard work on the project!
+
+<a href="https://github.com/chingu-voyages/v46-tier1-team-01/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=chingu-voyages/v46-tier1-team-01" />
+</a>
