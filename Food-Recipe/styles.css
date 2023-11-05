@@ -394,6 +394,53 @@ button:hover {
   cursor: pointer;
 }
 
+.loading-modal {
+  overflow: hidden;
+  position: relative;
+  height: 500px;
+  width: 366px;
+}
+.blur-1 {
+  filter: blur(0.5rem);
+}
+.blur-2 {
+  filter: blur(2rem);
+}
+.loading-modal p {
+  color: #acacac;
+}
+.lds-dual-ring {
+  z-index: 100;
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 6px solid rgb(219, 3, 3);
+  border-color: #acacac transparent;
+  animation: lds-dual-ring 2.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 /* Footer Section */
 footer {
   padding: 1rem;
