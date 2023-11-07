@@ -4,7 +4,43 @@ const API_KEY = "a4656306damsh4302c6129a88607p19321ejsnbb0d215f3796";
 const RATE_LIMIT = 5; // Requests per second
 let responseCount = 0;
 const fetchQueue = [];
-let loadingModal=null;
+let loadingModal = null;
+
+// Dark/light mode toggle
+
+const darkModeToggle = document.querySelector('.dark-mode__toggle');
+darkModeToggle.addEventListener('change', () => toggleDarkMode());
+
+const body = document.body;
+const isDarkMode = localStorage.getItem('dark-mode');
+if (isDarkMode === 'enabled') {
+  body.classList.add('dark-mode');
+  darkModeToggle.checked = true;
+}
+
+function toggleDarkMode() {
+  const result = document.querySelector('.results__result');
+  const modal = document.querySelector('.modal');
+  const modalClose = document.querySelector('.modal__close');
+
+  body.classList.toggle('dark-mode');
+
+  if (body.classList.contains('dark-mode')) {
+    localStorage.setItem('dark-mode', 'enabled');
+  } else {
+    localStorage.setItem('dark-mode', 'disabled');
+  }
+
+  if (result) {
+    result.classList.toggle('dark-mode');
+  }
+  if (modal) {
+    modal.classList.toggle('dark-mode');
+  }
+  if (modalClose) {
+    modalClose.classList.toggle('dark-mode');
+  }
+}
 
 
 //Searh Input Event Listener 
@@ -457,41 +493,3 @@ window.addEventListener('click', (e) => {
     }
   }
 })
-
-
-// Dark/light mode toggle
-
-const darkModeToggle = document.querySelector('.dark-mode__toggle');
-darkModeToggle.addEventListener('change', () => toggleDarkMode());
-
-const body = document.body;
-const isDarkMode = localStorage.getItem('dark-mode');
-if (isDarkMode === 'enabled') {
-  body.classList.add('dark-mode');
-  darkModeToggle.checked = true;
-}
-
-function toggleDarkMode() {
-  const result = document.querySelector('.results__result');
-  const modal = document.querySelector('.modal');
-  const modalClose = document.querySelector('.modal__close');
-
-  body.classList.toggle('dark-mode');
-
-  if (body.classList.contains('dark-mode')) {
-    localStorage.setItem('dark-mode', 'enabled');
-  } else {
-    localStorage.setItem('dark-mode', 'disabled');
-  }
-
-  if (result) {
-    result.classList.toggle('dark-mode');
-  }
-  if (modal) {
-    modal.classList.toggle('dark-mode');
-  }
-  if (modalClose) {
-    modalClose.classList.toggle('dark-mode');
-  }
-}
-//comment on first commit
