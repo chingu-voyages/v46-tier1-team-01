@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.9/lottie.min.js"></script>
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Inter&display=swap"
@@ -35,14 +36,6 @@
   </head>
 
   <body>
-    <div class="dark-mode__toggle--wrapper">
-      <input type="checkbox" class="dark-mode__toggle" id="dark-mode-checkbox">
-      <label for="dark-mode-checkbox" class="dark-mode__toggle-label" aria-label="Toggle Light and Dark Mode">
-        <i class="fas fa-moon"></i>
-        <i class="fas fa-sun"></i>
-        <span class="dark-mode__ball"></span>
-      </label>
-    </div>
     <header class="hero">
       <div class="hero__intro">
         <h1 class="hero__title">Recipe Hub</h1>
@@ -72,12 +65,23 @@
         <div class="ingredient-searched"></div>
 
         <div class="results__container">
-          <!-- <div class="results__result">
+          <!-- <div class="results__result loading-modal">
+            <div class="lds-dual-ring">
+              <p>Loading...</p>
+            </div>
+
             <img
-              src="https://picsum.photos/300/200"
+              src="https://img.buzzfeed.com/thumbnailer-prod-us-east-1/video-api/assets/121207.jpg"
               alt="plate of delicious food"
-              class="result__image"
+              class="result__image blur-2"
             />
+            <div class="results__result--intro blur-1">
+              <h3>Recipe Name</h3>
+              <button class="result__get-recipe">View Recipe</button>
+            </div>
+          </div> -->
+        </div>
+        <!-- <div class="results__result">
             <div class="results__result--intro">
               <h3 class="result__name">Meal Name</h3>
               <button type="button" class="result__get-recipe">
