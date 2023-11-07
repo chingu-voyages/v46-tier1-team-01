@@ -468,4 +468,3 @@ function clearResults() {
   }
 }
 
-//comment on first commit
