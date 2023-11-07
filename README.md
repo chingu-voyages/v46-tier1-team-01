@@ -4,7 +4,7 @@
 
 ![](./Recipe-Hub-screenshot.png)
 
-This is the repository of [Chingu](https://www.chingu.io/) Voyage 46 Tier 1 Team 1 and Recipe Hub, the team's project for the Chingu Voyage. Built in HTML, CSS and vanilla JavaScript, Recipe Hub allows users to search for recipes.
+This is the repository of [Chingu](https://www.chingu.io/) Voyage 46 Tier 1 Team 1 and Recipe Hub, the team's project for the Chingu Voyage. Built in HTML, CSS and vanilla JavaScript, Recipe Hub allows users to search for recipes by entering an ingredient.
 
 Live Site: [Recipe Hub](https://chingu-voyages.github.io/v46-tier1-team-01/Food-Recipe/)
 
@@ -27,7 +27,7 @@ Input a keyword into the search bar, click the "Search" button or press the Ente
 From the repository:
 1. Clone this project locally
 1. Open `index.html` using your browser
-1. Check out the wen page's functionality
+1. Check out the web page's functionality
 
 ## Dependencies
 
