@@ -1,28 +1,43 @@
-# voyage-tasks
+# Chingu Voyage 46 Tier 1 Team 1 - Recipe Hub
 
-Your project's `readme` is as important to success as your code. For 
-this reason you should put as much care into its creation and maintenance
-as you would any other component of the application.
+## Overview
 
-If you are unsure of what should go into the `readme` let this article,
-written by an experienced Chingu, be your starting point - 
-[Keys to a well written README](https://tinyurl.com/yk3wubft).
+![](./Recipe-Hub-screenshot.png)
 
-And before we go there's "one more thing"! Once you decide what to include
-in your `readme` feel free to replace the text we've provided here.
+This is the repository of [Chingu](https://www.chingu.io/) Voyage 46 Tier 1 Team 1 and Recipe Hub, the team's project for the Chingu Voyage. Built in HTML, CSS and vanilla JavaScript, Recipe Hub allows users to search for recipes by entering an ingredient.
 
-> Own it & Make it your Own!
+Live Site: [Recipe Hub](https://chingu-voyages.github.io/v46-tier1-team-01/Food-Recipe/)
 
-## Team Documents
+## Features
 
-You may find these helpful as you work together to organize your project.
+This project includes:
+- Search bar for searching recipe
+- Recipes with information including ingredients, cooking time, region of origin, difficulty, user ratings and nutrition information
+- Dark/light mode toggle
+- Responsive, mobile-friendly layout
+- Accessible web design
+- Mobile-first design workflow
 
-- [Team Project Ideas](./docs/team_project_ideas.md)
-- [Team Decision Log](./docs/team_decision_log.md)
+## Usage
 
-Meeting Agenda templates (located in the `/docs` directory in this repo):
+Input a keyword into the search bar, click the "Search" button or press the Enter key to start searching for recipes. Once the search results are loaded, click the "Get Recipe" button in one of the results for the recipe and its information.
 
-- Meeting - Voyage Kickoff --> ./docs/meeting-voyage_kickoff.docx
-- Meeting - App Vision & Feature Planning --> ./docs/meeting-vision_and_feature_planning.docx
-- Meeting - Sprint Retrospective, Review, and Planning --> ./docs/meeting-sprint_retrospective_review_and_planning.docx
-- Meeting - Sprint Open Topic Session --> ./docs/meeting-sprint_open_topic_session.docx
+## Running the Project
+
+From the repository:
+1. Clone this project locally
+1. Open `index.html` using your browser
+1. Check out the web page's functionality
+
+## Dependencies
+
+- [Tasty API](https://rapidapi.com/apidojo/api/tasty)
+- Google Fonts: [Inter](https://fonts.google.com/specimen/Inter)
+
+## Contributors
+
+Thank you for your hard work on the project!
+
+<a href="https://github.com/chingu-voyages/v46-tier1-team-01/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=chingu-voyages/v46-tier1-team-01" />
+</a>
