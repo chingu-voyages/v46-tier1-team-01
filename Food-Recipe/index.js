@@ -44,7 +44,7 @@ async function executeFetchQueue() {
             </div>
 
             <img
-              src="https://img.buzzfeed.com/thumbnailer-prod-us-east-1/video-api/assets/121207.jpg"
+              src= "./assets/loader.gif"
               alt="plate of delicious food"
               class="result__image blur-2"
             />
