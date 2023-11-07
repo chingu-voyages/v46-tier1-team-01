@@ -7,9 +7,6 @@
   --clr-black: black;
   --clr-white: white;
   --clr-accent: #8600d2;
-  --clr-dark-mode-body: #1e1e1e;
-  --clr-dark-mode-result: #3a3a3a;
-  --clr-dark-mode-modal-border: #999999;
   /* Font families */
   --ff-primary: "Inter";
   /* FOnt sizes */
@@ -265,9 +262,9 @@ button:hover {
   position: fixed;
   top: 50%;
   left: 50%;
-  /* transform: translate(-50%, -50%); */
-  /* transform: translate(-50%, -200%);
-  transition: transform 0.4s ease-in; */
+  transform: translate(-50%, -50%);
+  transform: translate(-50%, -200%);
+  transition: transform 0.4s ease-in;
 
   width: 95%;
   max-height: 90%;
@@ -452,80 +449,13 @@ footer {
   color: var(--clr-white);
 }
 
-footer a:focus {
-  outline: 0.1em solid var(--clr-white);
-  outline-offset: 0.1em;
-}
-
-/* Dark Mode */
-.dark-mode__toggle--wrapper {
-  position: fixed;
-  right: 0.9em;
-  top: 0.9em;
-}
-
-.dark-mode__toggle {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.dark-mode__toggle-label {
-  background-color: #111;
-  width: 50px;
-  height: 26px;
-  border-radius: 50px;
-  position: relative;
-  padding: 5px;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.fa-moon {color: #f1c40f;}
-
-.fa-sun {color: #f39c12;}
-
-.dark-mode__toggle-label .dark-mode__ball {
-  background-color: #fff;
-  width: 22px;
-  height: 22px;
-  position: absolute;
-  left: 2px;
-  top: 2px;
-  border-radius: 50%;
-  transition: transform 0.2s linear;
-}
-
-.dark-mode__toggle:checked + .dark-mode__toggle-label .dark-mode__ball {
-  transform: translateX(24px);
-}
-
-.dark-mode {
-  color: var(--clr-white);
-}
-
-body.dark-mode {
-  background-color: var(--clr-dark-mode-body);
-}
-
-.results__result.dark-mode,
-.modal.dark-mode {
-  background-color: var(--clr-dark-mode-result);
-  border-color: var(--clr-dark-mode-modal-border);
-}
-
 /* Screen sizes larger than mobile */
 @media only screen and (min-width: 30rem) {
   .search-section form {
     grid-template-columns: 2fr 1fr;
+  }
+  .modal::-webkit-scrollbar-thumb {
+    background: #b1b1b1;
   }
 }
 
@@ -556,8 +486,5 @@ body.dark-mode {
   }
   .results__container {
     grid-template-columns: auto auto auto;
-  }
-  .modal::-webkit-scrollbar-thumb {
-    background: #b1b1b1;
   }
 }
