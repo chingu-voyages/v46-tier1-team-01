@@ -1,6 +1,6 @@
 // Constants and Global Variables
 
-const API_KEY = "0b5f2a4987msh1c05fadf2f97fc1p130d44jsn94374ebd2b70";
+const API_KEY = "a4656306damsh4302c6129a88607p19321ejsnbb0d215f3796";
 const RATE_LIMIT = 5; // Requests per second
 let responseCount = 0;
 const fetchQueue = [];
@@ -31,17 +31,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function executeFetchQueue() {
   while (fetchQueue.length > 0) {
-    if (responseCount >= 1) {
+    if (responseCount >= 2) {
       break;
     }
 
-     // Create the loading modal if it doesn't exist
+    // Create the loading modal if it doesn't exist
     if (!loadingModal) {
       loadingModal = document.createElement('div');
-      loadingModal.classList.add('results__result');
-      const loading = document.createElement('p');
-      loading.textContent = 'Loading...';
-      loadingModal.appendChild(loading);
+      loadingModal.classList.add('results__result', 'loading-modal');
+      loadingModal.innerHTML = `<div class="lds-dual-ring">
+              <p>Loading...</p>
+            </div>
+
+            <img
+              src= "./assets/loader.gif"
+              alt="plate of delicious food"
+              class="result__image blur-2"
+            />
+            <div class="results__result--intro blur-1">
+              <h3>Recipe Name</h3>
+              <button class="result__get-recipe">View Recipe</button>
+            </div>`
     }
 
     // Append the loading modal to the results section
@@ -169,8 +179,8 @@ async function fetchResponses(recipeName) {
 // Function to create a dynamic recipe content box
 
 function createRecipe(recipeName, img_url, video_url, description, countryTag, rating, cookTime, yields, instructionsTag, nutrition, difficultyTag) {
-  
-   if (loadingModal) {
+
+  if (loadingModal) {
     loadingModal.remove();
     loadingModal = null; // Reset the loading modal variable
   }
@@ -240,6 +250,8 @@ function addDialog(name, url, video_url, description, countryTag, rating, cookTi
   const linkContainer = createVideoLink(video_url);
   const nutritionDetails = createNutritionDetails(nutrition);
   modal.append(close, mealName, mealImage, list, info, ingredientsText, instructionsText, linkContainer, nutritionDetails);
+  const resultsSection = document.querySelector('.results-section');
+
   resultsSection.appendChild(modal);
 
   close.addEventListener('click', () => closeModal(modal));
