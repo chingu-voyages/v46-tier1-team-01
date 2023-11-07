@@ -40,7 +40,6 @@ async function executeFetchQueue() {
       loadingModal = document.createElement('div');
       loadingModal.classList.add('results__result', 'loading-modal');
       loadingModal.innerHTML = `<div class="lds-dual-ring">
-              <p>Loading...</p>
             </div>
 
             <img
@@ -52,8 +51,6 @@ async function executeFetchQueue() {
               <h3>Recipe Name</h3>
               <button class="result__get-recipe">View Recipe</button>
             </div>`
-
-
     }
 
     // Append the loading modal to the results section
