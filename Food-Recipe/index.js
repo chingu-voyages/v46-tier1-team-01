@@ -1,6 +1,6 @@
 // Constants and Global Variables
 
-const API_KEY = "a4656306damsh4302c6129a88607p19321ejsnbb0d215f3796";
+const API_KEY = "69a70d6bb4msh7f8e2a33ff12d14p126bcbjsna708be83759f";
 const RATE_LIMIT = 5; // Requests per second
 let responseCount = 0;
 const fetchQueue = [];
