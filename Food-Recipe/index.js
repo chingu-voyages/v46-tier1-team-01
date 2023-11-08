@@ -201,7 +201,7 @@ async function fetchResponses(recipeName) {
         if (obj) {
           for (const key in obj) {
             if (obj.hasOwnProperty(key) && key !== "updated_at") {
-              result += `${key}: ${obj[key]}, `;
+              result += `${capitalize_firstLetter(key)}: ${obj[key]}, `;
             }
           }
           result = result.slice(0, -2).split(',').map(item => `<li>${item}</li>`).join("");
