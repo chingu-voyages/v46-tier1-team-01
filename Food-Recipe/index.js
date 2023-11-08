@@ -19,9 +19,9 @@ if (isDarkMode === 'enabled') {
 }
 
 function toggleDarkMode() {
-  const result = document.querySelector('.results__result');
-  const modal = document.querySelector('.modal');
-  const modalClose = document.querySelector('.modal__close');
+  const results = document.querySelectorAll('.results__result');
+  const modal = document.querySelectorAll('.modal');
+  const modalClose = document.querySelectorAll('.modal__close');
 
   body.classList.toggle('dark-mode');
 
@@ -31,14 +31,14 @@ function toggleDarkMode() {
     localStorage.setItem('dark-mode', 'disabled');
   }
 
-  if (result) {
-    result.classList.toggle('dark-mode');
+  if (results) {
+    results.forEach(i => i.classList.toggle('dark-mode'));
   }
   if (modal) {
-    modal.classList.toggle('dark-mode');
+    modal.forEach(i => i.classList.toggle('dark-mode'));
   }
   if (modalClose) {
-    modalClose.classList.toggle('dark-mode');
+    modalClose.forEach(i => i.classList.toggle('dark-mode'));
   }
 }
 
