@@ -1,29 +1,10 @@
-
-//closes the modal on click outside the modal
-window.addEventListener('click', (e) => {
-  if (document.querySelector('.modal')) {
-    if (!e.target.matches('.modal')) {
-      if (e.target.matches('.result__get-recipe')) return
-      else {
-        const doesNoCloseOnClick = e.target.closest('h3, img, ul, div, h4, p, a, summary');
-        if (!doesNoCloseOnClick) {
-          document.querySelector('.results-section').removeChild(document.querySelector('.modal'));
-        }
-      }
-
-    }
-  }
-})
-
-
-
 // Constants and Global Variables
 
-const API_KEY = "a4656306damsh4302c6129a88607p19321ejsnbb0d215f3796";
+const API_KEY = "69a70d6bb4msh7f8e2a33ff12d14p126bcbjsna708be83759f";
 const RATE_LIMIT = 5; // Requests per second
 let responseCount = 0;
 const fetchQueue = [];
-
+let loadingModal = null;
 
 // Dark/light mode toggle
 
@@ -38,9 +19,9 @@ if (isDarkMode === 'enabled') {
 }
 
 function toggleDarkMode() {
-  const result = document.querySelector('.results__result');
-  const modal = document.querySelector('.modal');
-  const modalClose = document.querySelector('.modal__close');
+  const results = document.querySelectorAll('.results__result');
+  const modal = document.querySelectorAll('.modal');
+  const modalClose = document.querySelectorAll('.modal__close');
 
   body.classList.toggle('dark-mode');
 
@@ -50,14 +31,14 @@ function toggleDarkMode() {
     localStorage.setItem('dark-mode', 'disabled');
   }
 
-  if (result) {
-    result.classList.toggle('dark-mode');
+  if (results) {
+    results.forEach(i => i.classList.toggle('dark-mode'));
   }
   if (modal) {
-    modal.classList.toggle('dark-mode');
+    modal.forEach(i => i.classList.toggle('dark-mode'));
   }
   if (modalClose) {
-    modalClose.classList.toggle('dark-mode');
+    modalClose.forEach(i => i.classList.toggle('dark-mode'));
   }
 }
 
@@ -72,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (form && searchInput && nameElement) {
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
+        clearResults();
       const searched = document.createElement("h2");
       searched.textContent = `Your results for ${searchInput.value}`;
       nameElement.innerHTML = "";
@@ -87,13 +69,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function executeFetchQueue() {
   while (fetchQueue.length > 0) {
-    if (responseCount >= 1) {
+    if (responseCount >= 2) {
       break;
     }
-    const { recipeName, originalName } = fetchQueue.shift();
-    await fetchResponses(recipeName, originalName);
+
+    showLoadingModal(); 
+
+    const { recipeName: displayName, originalName } = fetchQueue.shift();
+    await fetchResponses(displayName, originalName);
     await new Promise((resolve) => setTimeout(resolve, 1000 / RATE_LIMIT));
     responseCount++;
+    
+    hideLoadingModal(); 
   }
 }
 
@@ -112,16 +99,18 @@ async function Autocomplete(recipeName) {
   try {
     const response = await fetch(url, options);
     const result = await response.json();
-    console.log(result);
 
-    fetchQueue.length = 0; // Clear the fetchQueue
-    for (const element of result.results) {
-      if (element.display.toLowerCase() !== recipeName.toLowerCase()) {
-        fetchQueue.push({ recipeName: element.display, originalName: recipeName });
+    if (result.results && result.results.length > 0) {
+      fetchQueue.length = 0;
+      for (const element of result.results) {
+        if (element.display.toLowerCase() !== recipeName.toLowerCase()) {
+          fetchQueue.push({ recipeName: element.display, originalName: recipeName });
+        }
       }
+      executeFetchQueue();
+    } else {
+      noResults();
     }
-
-    executeFetchQueue(); // Start processing the fetch queue
   } catch (error) {
     console.error(error);
   }
@@ -147,80 +136,82 @@ async function fetchResponses(recipeName) {
     }
 
     const data = await response.json();
-    console.log(data.results[0]);
 
-    if (Array.isArray(data.results) && data.results.length > 0) {
-      const thumbnail = data.results[0].thumbnail_url;
-      const video_url = data.results[0].original_video_url;
-      const description = data.results[0].description;
-
-      const displayName = data.results[0]?.name;
-
-      const countryTag = () => {
-        let result = "";
-        data.results[0]?.tags.filter((entry) => {
-          if (entry.root_tag_type === "cuisine" && entry.display_name !== "Cuisine")
-            result += `${entry.display_name} `;
-        });
-        return result.length === 0 ? "N/A" : result;
-      };
-
-      const rating = Math.ceil(data.results[0].user_ratings.score * 5);
-      const yields = data.results[0].yields;
-      const cookTime = data.results[0].total_time_tier?.display_tier ?? "N/A";
-
-      const ingredientsTag = data.results[0]?.sections[0].components;
-      console.log(ingredientsTag)
-      const instructionsTag = data.results[0]?.instructions;
-
-
-      const difficultyTag = () => {
-        const master = data.results[0]?.tags;
-        const filteredDifficultyTags = master.filter((entry) => {
-          return (
-            entry.root_tag_type === "difficulty" &&
-            (entry.display_name === "Easy" ||
-              entry.display_name === "Medium" ||
-              entry.display_name === "Difficult" ||
-              entry.display_name === "Hard")
-          );
-        });
-        const result = filteredDifficultyTags.map((entry) => entry.display_name);
-        return result.length === 0 ? 'N/A' : result
-      };
-
-      const nutrition = () => {
-        const obj = data.results[0]?.nutrition;
-        let result = "";
-        if (obj) {
-          for (const key in obj) {
-            if (obj.hasOwnProperty(key) && key !== "updated_at") {
-              result += `${capitalize_firstLetter(key)}: ${obj[key]}, `;
-            }
-          }
-          result.length > 0 ? result = result.slice(0, -2).split(',').map(item => `<li>${item}</li>`).join("") : result = "No nutrition data available";
-        }
-
-        return result;
-      };
-
-
-
-
-      createRecipe(displayName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, ingredientsTag, instructionsTag, nutrition, difficultyTag);
-    } else {
-      console.error("No results found in thumbnail API for:", recipeName);
+    if (Array.isArray(data.results) && data.results.length === 0) {
+      console.log('No results found');
     }
+
+    const thumbnail = data.results[0].thumbnail_url;
+    const video_url = data.results[0].original_video_url;
+    const description = data.results[0].description;
+
+    const displayName = data.results[0]?.name;
+
+    const countryTag = () => {
+      let result = "";
+      data.results[0]?.tags.filter((entry) => {
+        if (entry.root_tag_type === "cuisine" && entry.display_name !== "Cuisine")
+          result += `${entry.display_name} `;
+      });
+      return result.length === 0 ? "N/A" : result;
+    };
+
+    const rating = Math.ceil(data.results[0].user_ratings.score * 5);
+    const yields = data.results[0].yields;
+    const cookTime = data.results[0].total_time_tier?.display_tier ?? "N/A";
+     const ingredientsTag = data.results[0]?.sections[0].components;
+
+    const instructionsTag = data.results[0]?.instructions;
+
+    const difficultyTag = () => {
+      const master = data.results[0]?.tags;
+      const filteredDifficultyTags = master.filter((entry) => {
+        return (
+          entry.root_tag_type === "difficulty" &&
+          (entry.display_name === "Easy" ||
+            entry.display_name === "Medium" ||
+            entry.display_name === "Difficult" ||
+            entry.display_name === "Hard")
+        );
+      });
+      const result = filteredDifficultyTags.map((entry) => entry.display_name);
+      return result;
+    };
+
+    const nutrition = () => {
+      const obj = data.results[0]?.nutrition;
+      let result = "";
+      if (obj) {
+        for (const key in obj) {
+          if (obj.hasOwnProperty(key) && key !== "updated_at") {
+            result += `${capitalize_firstLetter(key)}: ${obj[key]}, `;
+          }
+        }
+        result = result.slice(0, -2).split(',').map(item => `<li>${item}</li>`).join("");
+      }
+      return result;
+    };
+
+    createRecipe(displayName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, ingredientsTag, instructionsTag, nutrition, difficultyTag);
   } catch (error) {
     console.error(error);
   }
 }
 
+
 // Function to create a dynamic recipe content box
 
 function createRecipe(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, ingredientsTag, instructionsTag, nutrition, difficultyTag) {
+
+  if (loadingModal) {
+    loadingModal.remove();
+    loadingModal = null; // Reset the loading modal variable
+  }
+
+
   const box = document.createElement("div");
   box.classList.add("results__result");
+
   if (body.classList.contains('dark-mode')) {
     box.classList.add('dark-mode');
   }
@@ -261,6 +252,8 @@ function createViewRecipeButton(displayName, img_url, video_url, description, co
 // Function to display "No Results" message
 
 function noResults() {
+  console.log('No results')
+  clearResults(); 
   const recipeContainer = document.querySelector(".results__container");
   const noResult = document.createElement('h2');
   noResult.textContent = 'No result found';
@@ -349,7 +342,6 @@ function createTagItem(text) {
   item.textContent = text;
   return item;
 }
-
 function createInfoSection(yields, cookTime) {
   const info = document.createElement('div');
   info.classList.add('modal__info');
@@ -369,20 +361,18 @@ function createSubheading(title) {
 }
 
 
-function createIngredients(ingredientsTag) {
-  const ingredientsContainer = document.createElement('div');
-  const ingredientsTitle = document.createElement('h4');
-  ingredientsTitle.textContent = 'Ingredients';
+function createIngredients(description) {
+  const ingredientsListElement = document.createElement('div');
+
   const ingredientsList = document.createElement('ul');
-  ingredientsTag.forEach((ingredient) => {
-    const listItem = document.createElement('li');
-    listItem.textContent = ingredient.raw_text;
-    ingredientsList.appendChild(listItem);
-  });
-  // ingredientsText.classList.add('modal__ingredients');
-  ingredientsContainer.appendChild(ingredientsTitle);
-  ingredientsContainer.appendChild(ingredientsList);
-  return ingredientsContainer;
+    description.forEach((ingredient, index) => {
+      const listItem = document.createElement('li');
+      listItem.textContent = `Ingredient ${index + 1}: ${ingredient.ingredient.name}, Quantity: ${ingredient.measurements[0].quantity} ${ingredient.measurements[0].unit.display_singular}, Raw Text: ${ingredient.raw_text}`;
+      ingredientsList.appendChild(listItem);
+    });
+    ingredientsListElement.appendChild(ingredientsList);
+
+  return ingredientsListElement;
 }
 
 function createInstructions(instructionsTag) {
@@ -468,4 +458,56 @@ function clearResults() {
   }
 }
 
-//comment on first commit
+//closes the modal on click outside the modal
+window.addEventListener('click', (e) => {
+  if (document.querySelector('.modal')) {
+    if (!e.target.matches('.modal')) {
+      if (e.target.matches('.result__get-recipe')) return
+      else {
+        const doesNoCloseOnClick = e.target.closest('h3, img, ul, div, h4, p, a, summary');
+        if (!doesNoCloseOnClick) {
+          document.querySelector('.results-section').removeChild(document.querySelector('.modal'));
+        }
+      }
+
+    }
+  }
+})
+
+//Loading Modal
+
+function showLoadingModal() {
+  // Create and display the loading modal
+  loadingModal = document.createElement('div');
+  loadingModal.classList.add('results__result', 'loading-modal');
+  loadingModal.innerHTML = `<div class="lds-dual-ring">
+              <p>Loading...</p>
+            </div>
+
+            <img
+              src="./assets/loader.gif"
+              alt="plate of delicious food"
+              class="result__image blur-2"
+            />
+            <div class="results__result--intro blur-1">
+              <h3>Recipe Name</h3>
+              <button class="result__get-recipe">View Recipe</button>
+            </div>`;
+  if (body.classList.contains('dark-mode')) {
+    loadingModal.classList.add('dark-mode');
+  }
+
+  // Append the loading modal to the results section
+  const resultsSection = document.querySelector('.results-section');
+  resultsSection.appendChild(loadingModal);
+}
+
+
+//Hiding Modal
+
+function hideLoadingModal() {
+  if (loadingModal) {
+    loadingModal.remove();
+    loadingModal = null;
+  }
+}

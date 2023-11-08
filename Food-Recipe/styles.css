@@ -333,6 +333,14 @@ button:hover {
   float: right;
 }
 
+.modal__close:focus {
+  outline: 0.15em solid var(--clr-black);
+}
+
+.modal__close:focus.dark-mode {
+  outline: 0.15em solid var(--clr-white);
+}
+
 .modal__name {
   text-align: center;
   margin-top: 1.5em;
@@ -372,6 +380,11 @@ button:hover {
   margin: 2em 0;
 }
 
+.modal__btn-wrapper a:focus {
+  outline: 0.2em solid var(--clr-accent);
+  outline-offset: 0.15em;
+}
+
 .modal__video-link {
   font-size: 1.2rem;
   font-weight: 700;
@@ -391,6 +404,16 @@ button:hover {
 .modal__nutrition > summary {
   font-size: var(--fs-4);
   font-weight: 700;
+}
+
+.modal__nutrition > summary:focus {
+  outline: 0.15em solid var(--clr-accent);
+  outline-offset: 0.2em;
+}
+
+.dark-mode.modal__nutrition > summary:focus {
+  outline: 0.15em solid var(--clr-white);
+  outline-offset: 0.2em;
 }
 
 .modal__nutrition:hover {
