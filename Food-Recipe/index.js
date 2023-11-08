@@ -87,9 +87,10 @@ async function executeFetchQueue() {
             <div class="results__result--intro blur-1">
               <h3>Recipe Name</h3>
               <button class="result__get-recipe">View Recipe</button>
-            </div>`
-
-
+            </div>`;
+      if (body.classList.contains('dark-mode')) {
+        loadingModal.classList.add('dark-mode');
+      }
     }
  // Append the loading modal to the results section
     const resultsSection = document.querySelector('.results-section');
