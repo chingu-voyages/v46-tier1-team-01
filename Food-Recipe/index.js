@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (form && searchInput && nameElement) {
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
+        clearResults();
       const searched = document.createElement("h2");
       searched.textContent = `Your results for ${searchInput.value}`;
       nameElement.innerHTML = "";
@@ -71,35 +72,15 @@ async function executeFetchQueue() {
     if (responseCount >= 2) {
       break;
     }
-     // Create the loading modal if it doesn't exist
-    if (!loadingModal) {
-      loadingModal = document.createElement('div');
-      loadingModal.classList.add('results__result', 'loading-modal');
-      loadingModal.innerHTML = `<div class="lds-dual-ring">
-              <p>Loading...</p>
-            </div>
 
-            <img
-              src= "./assets/loader.gif"
-              alt="plate of delicious food"
-              class="result__image blur-2"
-            />
-            <div class="results__result--intro blur-1">
-              <h3>Recipe Name</h3>
-              <button class="result__get-recipe">View Recipe</button>
-            </div>`;
-      if (body.classList.contains('dark-mode')) {
-        loadingModal.classList.add('dark-mode');
-      }
-    }
- // Append the loading modal to the results section
-    const resultsSection = document.querySelector('.results-section');
-    resultsSection.appendChild(loadingModal);
+    showLoadingModal(); 
 
     const { recipeName: displayName, originalName } = fetchQueue.shift();
     await fetchResponses(displayName, originalName);
     await new Promise((resolve) => setTimeout(resolve, 1000 / RATE_LIMIT));
     responseCount++;
+    
+    hideLoadingModal(); 
   }
 }
 
@@ -118,16 +99,18 @@ async function Autocomplete(recipeName) {
   try {
     const response = await fetch(url, options);
     const result = await response.json();
-    console.log(result);
 
-    fetchQueue.length = 0; 
-    for (const element of result.results) {
-      if (element.display.toLowerCase() !== recipeName.toLowerCase()) {
-        fetchQueue.push({ recipeName: element.display, originalName: recipeName });
+    if (result.results && result.results.length > 0) {
+      fetchQueue.length = 0;
+      for (const element of result.results) {
+        if (element.display.toLowerCase() !== recipeName.toLowerCase()) {
+          fetchQueue.push({ recipeName: element.display, originalName: recipeName });
+        }
       }
+      executeFetchQueue();
+    } else {
+      noResults();
     }
-
-    executeFetchQueue(); // Start processing the fetch queue
   } catch (error) {
     console.error(error);
   }
@@ -153,10 +136,12 @@ async function fetchResponses(recipeName) {
     }
 
     const data = await response.json();
-    console.log(data.results[0]);
-
-    if (Array.isArray(data.results) && data.results.length > 0) {
-      const thumbnail = data.results[0].thumbnail_url;
+    console.log('Number of results : ', data.results.length);
+ 
+    if (Array.isArray(data.results) && data.results.length === 0) {
+      return false;
+      } else {
+        const thumbnail = data.results[0].thumbnail_url;
       const video_url = data.results[0].original_video_url;
       const description = data.results[0].description;
 
@@ -208,16 +193,13 @@ async function fetchResponses(recipeName) {
         }
         return result;
       };
-
-
-
-
       createRecipe(displayName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, ingredientsTag, instructionsTag, nutrition, difficultyTag);
-    } else {
-      console.error("No results found in thumbnail API for:", recipeName);
+      return true;
     }
+    
   } catch (error) {
     console.error(error);
+
   }
 }
 
@@ -274,6 +256,8 @@ function createViewRecipeButton(displayName, img_url, video_url, description, co
 // Function to display "No Results" message
 
 function noResults() {
+  console.log('No results')
+  clearResults(); 
   const recipeContainer = document.querySelector(".results__container");
   const noResult = document.createElement('h2');
   noResult.textContent = 'No result found';
@@ -494,3 +478,41 @@ window.addEventListener('click', (e) => {
     }
   }
 })
+
+//Loading Modal
+
+function showLoadingModal() {
+  // Create and display the loading modal
+  loadingModal = document.createElement('div');
+  loadingModal.classList.add('results__result', 'loading-modal');
+  loadingModal.innerHTML = `<div class="lds-dual-ring">
+              <p>Loading...</p>
+            </div>
+
+            <img
+              src="./assets/loader.gif"
+              alt="plate of delicious food"
+              class="result__image blur-2"
+            />
+            <div class="results__result--intro blur-1">
+              <h3>Recipe Name</h3>
+              <button class="result__get-recipe">View Recipe</button>
+            </div>`;
+  if (body.classList.contains('dark-mode')) {
+    loadingModal.classList.add('dark-mode');
+  }
+
+  // Append the loading modal to the results section
+  const resultsSection = document.querySelector('.results-section');
+  resultsSection.appendChild(loadingModal);
+}
+
+
+//Hiding Modal
+
+function hideLoadingModal() {
+  if (loadingModal) {
+    loadingModal.remove();
+    loadingModal = null;
+  }
+}
