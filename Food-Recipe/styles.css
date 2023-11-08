@@ -372,6 +372,11 @@ button:hover {
   margin: 2em 0;
 }
 
+.modal__btn-wrapper a:focus {
+  outline: 0.2em solid var(--clr-accent);
+  outline-offset: 0.15em;
+}
+
 .modal__video-link {
   font-size: 1.2rem;
   font-weight: 700;
