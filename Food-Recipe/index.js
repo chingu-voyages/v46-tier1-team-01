@@ -136,72 +136,68 @@ async function fetchResponses(recipeName) {
     }
 
     const data = await response.json();
-    console.log('Number of results : ', data.results.length);
- 
+
     if (Array.isArray(data.results) && data.results.length === 0) {
-      return false;
-      } else {
-        const thumbnail = data.results[0].thumbnail_url;
-      const video_url = data.results[0].original_video_url;
-      const description = data.results[0].description;
-
-      const displayName = data.results[0]?.name;
-
-      const countryTag = () => {
-        let result = "";
-        data.results[0]?.tags.filter((entry) => {
-          if (entry.root_tag_type === "cuisine" && entry.display_name !== "Cuisine")
-            result += `${entry.display_name} `;
-        });
-        return result.length === 0 ? "N/A" : result;
-      };
-
-      const rating = Math.ceil(data.results[0].user_ratings.score * 5);
-      const yields = data.results[0].yields;
-      const cookTime = data.results[0].total_time_tier?.display_tier ?? "N/A";
-
-      const ingredientsTag = data.results[0]?.sections[0].components;
-      console.log(ingredientsTag)
-      const instructionsTag = data.results[0]?.instructions;
-
-
-      const difficultyTag = () => {
-        const master = data.results[0]?.tags;
-        const filteredDifficultyTags = master.filter((entry) => {
-          return (
-            entry.root_tag_type === "difficulty" &&
-            (entry.display_name === "Easy" ||
-              entry.display_name === "Medium" ||
-              entry.display_name === "Difficult" ||
-              entry.display_name === "Hard")
-          );
-        });
-        const result = filteredDifficultyTags.map((entry) => entry.display_name);
-        return result;
-      };
-
-      const nutrition = () => {
-        const obj = data.results[0]?.nutrition;
-        let result = "";
-        if (obj) {
-          for (const key in obj) {
-            if (obj.hasOwnProperty(key) && key !== "updated_at") {
-              result += `${capitalize_firstLetter(key)}: ${obj[key]}, `;
-            }
-          }
-          result = result.slice(0, -2).split(',').map(item => `<li>${item}</li>`).join("");
-        }
-        return result;
-      };
-      createRecipe(displayName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, ingredientsTag, instructionsTag, nutrition, difficultyTag);
-      return true;
+      console.log('No results found');
     }
-    
+
+    const thumbnail = data.results[0].thumbnail_url;
+    const video_url = data.results[0].original_video_url;
+    const description = data.results[0].description;
+
+    const displayName = data.results[0]?.name;
+
+    const countryTag = () => {
+      let result = "";
+      data.results[0]?.tags.filter((entry) => {
+        if (entry.root_tag_type === "cuisine" && entry.display_name !== "Cuisine")
+          result += `${entry.display_name} `;
+      });
+      return result.length === 0 ? "N/A" : result;
+    };
+
+    const rating = Math.ceil(data.results[0].user_ratings.score * 5);
+    const yields = data.results[0].yields;
+    const cookTime = data.results[0].total_time_tier?.display_tier ?? "N/A";
+     const ingredientsTag = data.results[0]?.sections[0].components;
+
+    const instructionsTag = data.results[0]?.instructions;
+
+    const difficultyTag = () => {
+      const master = data.results[0]?.tags;
+      const filteredDifficultyTags = master.filter((entry) => {
+        return (
+          entry.root_tag_type === "difficulty" &&
+          (entry.display_name === "Easy" ||
+            entry.display_name === "Medium" ||
+            entry.display_name === "Difficult" ||
+            entry.display_name === "Hard")
+        );
+      });
+      const result = filteredDifficultyTags.map((entry) => entry.display_name);
+      return result;
+    };
+
+    const nutrition = () => {
+      const obj = data.results[0]?.nutrition;
+      let result = "";
+      if (obj) {
+        for (const key in obj) {
+          if (obj.hasOwnProperty(key) && key !== "updated_at") {
+            result += `${capitalize_firstLetter(key)}: ${obj[key]}, `;
+          }
+        }
+        result = result.slice(0, -2).split(',').map(item => `<li>${item}</li>`).join("");
+      }
+      return result;
+    };
+
+    createRecipe(displayName, thumbnail, video_url, description, countryTag, rating, cookTime, yields, ingredientsTag, instructionsTag, nutrition, difficultyTag);
   } catch (error) {
     console.error(error);
-
   }
 }
+
 
 // Function to create a dynamic recipe content box
 
@@ -366,18 +362,17 @@ function createSubheading(title) {
 
 
 function createIngredients(description) {
-  const ingredientsContainer = document.createElement('div');
+  const ingredientsListElement = document.createElement('div');
 
-  const ingredientsTitle = document.createElement('h4');
-  ingredientsTitle.textContent = 'Ingredients';
+  const ingredientsList = document.createElement('ul');
+    description.forEach((ingredient, index) => {
+      const listItem = document.createElement('li');
+      listItem.textContent = `Ingredient ${index + 1}: ${ingredient.ingredient.name}, Quantity: ${ingredient.measurements[0].quantity} ${ingredient.measurements[0].unit.display_singular}, Raw Text: ${ingredient.raw_text}`;
+      ingredientsList.appendChild(listItem);
+    });
+    ingredientsListElement.appendChild(ingredientsList);
 
-  const ingredientsText = document.createElement('p');
-  ingredientsText.classList.add('modal__ingredients');
-  ingredientsText.textContent = description;
-  ingredientsContainer.appendChild(ingredientsTitle);
-  ingredientsContainer.appendChild(ingredientsText);
-
-  return ingredientsContainer;
+  return ingredientsListElement;
 }
 
 function createInstructions(instructionsTag) {
