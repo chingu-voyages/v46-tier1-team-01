@@ -2,46 +2,8 @@
 
 const API_KEY = "69a70d6bb4msh7f8e2a33ff12d14p126bcbjsna708be83759f";
 const RATE_LIMIT = 5; // Requests per second
-let responseCount = 0;
-const fetchQueue = [];
+const fetchQueue = []; //API is so slow (5 req per second),so we are using this fetch queue
 let loadingModal = null;
-
-// Dark/light mode toggle
-
-const darkModeToggle = document.querySelector('.dark-mode__toggle');
-darkModeToggle.addEventListener('change', () => toggleDarkMode());
-
-const body = document.body;
-const isDarkMode = localStorage.getItem('dark-mode');
-if (isDarkMode === 'enabled') {
-  body.classList.add('dark-mode');
-  darkModeToggle.checked = true;
-}
-
-function toggleDarkMode() {
-  const results = document.querySelectorAll('.results__result');
-  const modal = document.querySelectorAll('.modal');
-  const modalClose = document.querySelectorAll('.modal__close');
-
-  body.classList.toggle('dark-mode');
-
-  if (body.classList.contains('dark-mode')) {
-    localStorage.setItem('dark-mode', 'enabled');
-  } else {
-    localStorage.setItem('dark-mode', 'disabled');
-  }
-
-  if (results) {
-    results.forEach(i => i.classList.toggle('dark-mode'));
-  }
-  if (modal) {
-    modal.forEach(i => i.classList.toggle('dark-mode'));
-  }
-  if (modalClose) {
-    modalClose.forEach(i => i.classList.toggle('dark-mode'));
-  }
-}
-
 
 //Searh Input Event Listener 
 
@@ -59,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
       nameElement.innerHTML = "";
       nameElement.appendChild(searched);
       clearResults();
-      responseCount = 0;
       await Autocomplete(searchInput.value);
     });
   } else {
@@ -69,16 +30,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function executeFetchQueue() {
   while (fetchQueue.length > 0) {
-    if (responseCount >= 2) {
-      break;
-    }
-
+  
     showLoadingModal(); 
 
     const { recipeName: displayName, originalName } = fetchQueue.shift();
     await fetchResponses(displayName, originalName);
     await new Promise((resolve) => setTimeout(resolve, 1000 / RATE_LIMIT));
-    responseCount++;
     
     hideLoadingModal(); 
   }
@@ -198,16 +155,14 @@ async function fetchResponses(recipeName) {
   }
 }
 
-
 // Function to create a dynamic recipe content box
 
 function createRecipe(displayName, img_url, video_url, description, countryTag, rating, cookTime, yields, ingredientsTag, instructionsTag, nutrition, difficultyTag) {
 
   if (loadingModal) {
     loadingModal.remove();
-    loadingModal = null; // Reset the loading modal variable
+    loadingModal = null; 
   }
-
 
   const box = document.createElement("div");
   box.classList.add("results__result");
@@ -258,12 +213,6 @@ function noResults() {
   const noResult = document.createElement('h2');
   noResult.textContent = 'No result found';
   recipeContainer.appendChild(noResult);
-}
-
-// Function to capitalize the first letter of a string
-
-function capitalize_firstLetter(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 // Function for view Recipe button
@@ -450,6 +399,12 @@ function Capitalize(text) {
   return result;
 }
 
+// Function to capitalize the first letter of a string
+
+function capitalize_firstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 
 function clearResults() {
   const recipeContainer = document.querySelector(".results__container");
@@ -509,5 +464,41 @@ function hideLoadingModal() {
   if (loadingModal) {
     loadingModal.remove();
     loadingModal = null;
+  }
+}
+
+// Dark/light mode toggle
+
+const darkModeToggle = document.querySelector('.dark-mode__toggle');
+darkModeToggle.addEventListener('change', () => toggleDarkMode());
+
+const body = document.body;
+const isDarkMode = localStorage.getItem('dark-mode');
+if (isDarkMode === 'enabled') {
+  body.classList.add('dark-mode');
+  darkModeToggle.checked = true;
+}
+
+function toggleDarkMode() {
+  const results = document.querySelectorAll('.results__result');
+  const modal = document.querySelectorAll('.modal');
+  const modalClose = document.querySelectorAll('.modal__close');
+
+  body.classList.toggle('dark-mode');
+
+  if (body.classList.contains('dark-mode')) {
+    localStorage.setItem('dark-mode', 'enabled');
+  } else {
+    localStorage.setItem('dark-mode', 'disabled');
+  }
+
+  if (results) {
+    results.forEach(i => i.classList.toggle('dark-mode'));
+  }
+  if (modal) {
+    modal.forEach(i => i.classList.toggle('dark-mode'));
+  }
+  if (modalClose) {
+    modalClose.forEach(i => i.classList.toggle('dark-mode'));
   }
 }
