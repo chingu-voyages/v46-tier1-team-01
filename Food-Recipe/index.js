@@ -316,13 +316,14 @@ function createIngredients(description) {
   const ingredientsList = document.createElement('ul');
   description.forEach((ingredient, index) => {
     const listItem = document.createElement('li');
-    listItem.textContent = `Ingredient ${index + 1}: ${ingredient.ingredient.name}, Quantity: ${ingredient.measurements[0].quantity} ${ingredient.measurements[0].unit.display_singular}, Raw Text: ${ingredient.raw_text}`;
+    listItem.textContent = ingredient.raw_text;
     ingredientsList.appendChild(listItem);
   });
   ingredientsListElement.appendChild(ingredientsList);
-
+  
   return ingredientsListElement;
 }
+
 
 function createInstructions(instructionsTag) {
   const instructionsDiv = document.createElement('div');
