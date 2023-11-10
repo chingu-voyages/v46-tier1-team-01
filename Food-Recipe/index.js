@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (form && searchInput && nameElement) {
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
-        clearResults();
+      clearResults();
       const searched = document.createElement("h2");
       searched.textContent = `Your results for ${searchInput.value}`;
       nameElement.innerHTML = "";
@@ -30,14 +30,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function executeFetchQueue() {
   while (fetchQueue.length > 0) {
-  
-    showLoadingModal(); 
+
+    showLoadingModal();
 
     const { recipeName: displayName, originalName } = fetchQueue.shift();
     await fetchResponses(displayName, originalName);
     await new Promise((resolve) => setTimeout(resolve, 1000 / RATE_LIMIT));
-    
-    hideLoadingModal(); 
+
+    hideLoadingModal();
   }
 }
 
@@ -116,7 +116,7 @@ async function fetchResponses(recipeName) {
     const rating = Math.ceil(data.results[0].user_ratings.score * 5);
     const yields = data.results[0].yields;
     const cookTime = data.results[0].total_time_tier?.display_tier ?? "N/A";
-     const ingredientsTag = data.results[0]?.sections[0].components;
+    const ingredientsTag = data.results[0]?.sections[0].components;
 
     const instructionsTag = data.results[0]?.instructions;
 
@@ -161,7 +161,7 @@ function createRecipe(displayName, img_url, video_url, description, countryTag, 
 
   if (loadingModal) {
     loadingModal.remove();
-    loadingModal = null; 
+    loadingModal = null;
   }
 
   const box = document.createElement("div");
@@ -208,7 +208,7 @@ function createViewRecipeButton(displayName, img_url, video_url, description, co
 
 function noResults() {
   console.log('No results')
-  clearResults(); 
+  clearResults();
   const recipeContainer = document.querySelector(".results__container");
   const noResult = document.createElement('h2');
   noResult.textContent = 'No result found';
@@ -314,12 +314,12 @@ function createIngredients(description) {
   const ingredientsListElement = document.createElement('div');
 
   const ingredientsList = document.createElement('ul');
-    description.forEach((ingredient, index) => {
-      const listItem = document.createElement('li');
-      listItem.textContent = `Ingredient ${index + 1}: ${ingredient.ingredient.name}, Quantity: ${ingredient.measurements[0].quantity} ${ingredient.measurements[0].unit.display_singular}, Raw Text: ${ingredient.raw_text}`;
-      ingredientsList.appendChild(listItem);
-    });
-    ingredientsListElement.appendChild(ingredientsList);
+  description.forEach((ingredient, index) => {
+    const listItem = document.createElement('li');
+    listItem.textContent = `Ingredient ${index + 1}: ${ingredient.ingredient.name}, Quantity: ${ingredient.measurements[0].quantity} ${ingredient.measurements[0].unit.display_singular}, Raw Text: ${ingredient.raw_text}`;
+    ingredientsList.appendChild(listItem);
+  });
+  ingredientsListElement.appendChild(ingredientsList);
 
   return ingredientsListElement;
 }
@@ -435,12 +435,14 @@ function showLoadingModal() {
   // Create and display the loading modal
   loadingModal = document.createElement('div');
   loadingModal.classList.add('results__result', 'loading-modal');
-  loadingModal.innerHTML = `<div class="lds-dual-ring">
+  if (body.classList.contains('dark-mode')) {
+    loadingModal.classList.add('dark-mode');
+    loadingModal.innerHTML = `<div class="lds-dual-ring">
               <p>Loading...</p>
             </div>
 
             <img
-              src="./assets/loader.gif"
+              src="./assets/black gif.gif"
               alt="plate of delicious food"
               class="result__image blur-2"
             />
@@ -448,10 +450,20 @@ function showLoadingModal() {
               <h3>Recipe Name</h3>
               <button class="result__get-recipe">View Recipe</button>
             </div>`;
-  if (body.classList.contains('dark-mode')) {
-    loadingModal.classList.add('dark-mode');
+  } else {
+    loadingModal.innerHTML = `<div class="lds-dual-ring">
+    <p>Loading...</p>
+    </div>
+            <img
+              src="./assets/loader.gif"
+              alt="plate of delicious food"
+              class="result__image blur-2"
+              />
+              <div class="results__result--intro blur-1">
+              <h3>Recipe Name</h3>
+              <button class="result__get-recipe">View Recipe</button>
+              </div>`;
   }
-
   // Append the loading modal to the results section
   const resultsSection = document.querySelector('.results-section');
   resultsSection.appendChild(loadingModal);
