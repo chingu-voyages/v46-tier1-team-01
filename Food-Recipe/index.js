@@ -144,7 +144,7 @@ async function fetchResponses(recipeName) {
             result += `${capitalize_firstLetter(key)}: ${obj[key]}, `;
           }
         }
-        result = result.slice(0, -2).split(',').map(item => `<li>${item}</li>`).join("");
+        result = result.length > 0 ? result.slice(0, -2).split(',').map(item => `<li>${item}</li>`).join("") : 'No nutrition data available';
       }
       return result;
     };
